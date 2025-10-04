@@ -1,0 +1,29 @@
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.circular-background {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -10;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.circular-grid {
+  position: absolute;
+  left: calc(var(--center-x) - var(--svg-size) / 2);
+  bottom: calc(var(--center-y) - var(--svg-size) / 2);
+  width: var(--svg-size);
+  height: var(--svg-size);
+  animation: rotate-slow 60s linear infinite;
+  transform-origin: var(--origin-x-percent) var(--origin-y-percent);
+}

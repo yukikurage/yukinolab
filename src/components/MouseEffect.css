@@ -1,0 +1,69 @@
+@keyframes circle-expand {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 0 1px var(--tw-shadow-color);
+    animation-timing-function: cubic-bezier(0, 0.8, 0.2, 1);
+  }
+  80% {
+    transform: scale(3);
+    box-shadow: 0 0 0 1px var(--tw-shadow-color);
+    animation-timing-function: ease-in;
+  }
+  to {
+    transform: scale(3.1);
+    box-shadow: 0 0 0 0px var(--tw-shadow-color);
+  }
+}
+
+@keyframes click-star-rotate {
+  from {
+    transform: scale(1) rotate(0deg);
+    animation-timing-function: cubic-bezier(0, 0.8, 0.6, 1);
+  }
+  70% {
+    transform: scale(1) rotate(180deg);
+    animation-timing-function: linear;
+  }
+  to {
+    transform: scale(0) rotate(180deg);
+  }
+}
+
+@keyframes mouse-star {
+  from {
+    transform: scale(1) rotate(0deg);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    animation-timing-function: ease-out;
+  }
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+.mouse-star {
+  animation: mouse-star 4s linear infinite;
+}
+
+.click-effect-circle {
+  position: fixed;
+  pointer-events: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  transform-origin: center;
+  animation: circle-expand 1s linear forwards;
+}
+
+.click-effect-star {
+  position: fixed;
+  pointer-events: none;
+  animation: click-star-rotate 0.7s linear forwards;
+}
+
+.star-svg {
+  width: 100%;
+  height: 100%;
+}

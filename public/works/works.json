@@ -1,0 +1,23 @@
+[
+  {
+    "id": "stellagate",
+    "title": "Stellagate",
+    "description": "ゲーム「Stellagate」の公式ページ",
+    "image": "/works/screenshot-stellagate.png",
+    "contentPath": "/works/content/stellagate.md"
+  },
+  {
+    "id": "yukinet",
+    "title": "Yukinet",
+    "description": "ゆきくらげのホームページ",
+    "image": "/works/screenshot-yukinet.png",
+    "contentPath": "/works/content/yukinet.md"
+  },
+  {
+    "id": "yukiworks",
+    "title": "Yuki Works",
+    "description": "ゆきくらげの創作ポートフォリオ",
+    "image": "/works/screenshot-yukiworks.png",
+    "contentPath": "/works/content/yukiworks.md"
+  }
+]

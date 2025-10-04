@@ -1,103 +1,289 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Navigation from "@/components/Navigation";
+import Header from "@/components/Header";
+import Section from "@/components/Section";
+import Card from "@/components/Card";
+import TitleCircle from "@/components/TitleCircle";
+import WorkCard from "@/components/WorkCard";
+import WorkModal from "@/components/WorkModal";
+import ContactForm from "@/components/ContactForm";
+import { useCrossEffect } from "@/hooks/useCrossEffect";
+
+interface Work {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  contentPath: string;
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [works, setWorks] = useState<Work[]>([]);
+  const [openModals, setOpenModals] = useState<Record<string, boolean>>({});
+  const [workContents, setWorkContents] = useState<Record<string, string>>({});
+  const { trigger, CrossEffectRenderer } = useCrossEffect();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    fetch("/works/works.json")
+      .then((res) => res.json())
+      .then((data) => setWorks(data as Work[]))
+      .catch((error) => console.error("Failed to load works:", error));
+  }, []);
+
+  const handleWorkClick = async (work: Work, e: React.MouseEvent) => {
+    trigger(e.clientX, e.clientY);
+    setOpenModals((prev) => ({ ...prev, [work.id]: true }));
+
+    if (!workContents[work.id]) {
+      try {
+        const response = await fetch(work.contentPath);
+        const text = await response.text();
+        setWorkContents((prev) => ({ ...prev, [work.id]: text }));
+      } catch (error) {
+        console.error("Failed to load content:", error);
+        setWorkContents((prev) => ({ ...prev, [work.id]: "" }));
+      }
+    }
+  };
+
+  const handleClose = (workId: string) => {
+    setOpenModals((prev) => ({ ...prev, [workId]: false }));
+  };
+
+  return (
+    <div className="relative w-full text-neutral-900">
+      <CrossEffectRenderer />
+      <Header />
+      {/* Hero Section */}
+      <section className="relative min-h-screen w-full font-sans flex justify-center items-center">
+        <Navigation />
+        <TitleCircle />
+        <div className="font-title text-5xl md:text-6xl font-bold text-center select-none relative z-10 text-neutral-900">
+          {"YUKINOLABO"}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* Works Section */}
+      <Section id="works" title="WORKS">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {works.map((work) => (
+            <WorkCard
+              key={work.id}
+              title={work.title}
+              description={work.description}
+              image={work.image}
+              onClick={(e) => {
+                handleWorkClick(work, e);
+              }}
+            />
+          ))}
+        </div>
+      </Section>
+
+      {/* Work Modals */}
+      {works.map((work) => (
+        <WorkModal
+          key={work.id}
+          isOpen={!!openModals[work.id]}
+          onClose={() => handleClose(work.id)}
+          title={work.title}
+          description={work.description}
+          image={work.image}
+          content={workContents[work.id] || ""}
+        />
+      ))}
+
+      {/* Price Section */}
+      <Section
+        id="price"
+        title="PRICE"
+        className="bg-neutral-100/50 backdrop-blur-lg relative overflow-hidden"
+      >
+        <div className="max-w-4xl mx-auto space-y-16 relative z-10">
+          {/* 基本料金 */}
+          <Card
+            data-text-region
+            clickable={false}
+            className="border border-amber-400 bg-white"
+          >
+            <div className="mb-12">
+              <h3 className="font-title text-2xl font-bold mb-6 text-neutral-900">
+                基本料金
+              </h3>
+              <p className="text-neutral-600 mb-4 leading-relaxed">
+                依頼者さんの求める世界観に合わせてホームページを作ります。
+                YUKINOLABOは2025年10月にスタートし、まだ実績がありません……是非初めての依頼者さんになってください！
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-12">
+              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
+                <span className="text-neutral-700">カスタムデザイン</span>
+                <span className="text-sm text-neutral-500">
+                  求める世界観やデザインに合わせて制作します
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
+                <span className="text-neutral-700">レスポンシブ対応</span>
+                <span className="text-sm text-neutral-500">
+                  スマホ・タブレットから見ても綺麗です
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
+                <span className="text-neutral-700">基本ページ</span>
+                <span className="text-sm text-neutral-500">
+                  About / Works / Links が含まれます
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
+                <span className="text-neutral-700">アニメーション</span>
+                <span className="text-sm text-neutral-500">
+                  基本的な遷移アニメーションなどです
+                </span>
+              </div>
+            </div>
+
+            <div className="text-right">
+              <p className="text-sm text-neutral-500 mb-1">基本料金</p>
+              <p className="text-3xl font-bold text-amber-600">¥50,000〜</p>
+            </div>
+          </Card>
+
+          {/* 追加オプション */}
+          <div data-text-region>
+            <h3 className="font-title text-2xl font-bold mb-10 text-neutral-900">
+              追加オプション
+            </h3>
+            <div className="space-y-6">
+              <div className="flex items-start justify-between py-6 border-b border-neutral-200">
+                <div className="flex-1">
+                  <h4 className="font-title text-lg font-semibold mb-2 text-neutral-900">
+                    コンテンツ追加
+                  </h4>
+                  <p className="text-neutral-600">
+                    追加ページやセクションの制作
+                  </p>
+                </div>
+                <div className="text-right ml-8">
+                  <p className="text-xl font-bold text-amber-600">+¥5,000〜</p>
+                  <p className="text-xs text-neutral-400">/ ページ</p>
+                </div>
+              </div>
+
+              <div className="flex items-start justify-between py-6 border-b border-neutral-200">
+                <div className="flex-1">
+                  <h4 className="font-title text-lg font-semibold mb-2 text-neutral-900">
+                    動きのある背景・エフェクト
+                  </h4>
+                  <p className="text-neutral-600">
+                    パーティクル、パララックス等の実装
+                  </p>
+                </div>
+                <div className="text-right ml-8">
+                  <p className="text-xl font-bold text-amber-600">+¥10,000〜</p>
+                </div>
+              </div>
+
+              <div className="flex items-start justify-between py-6 border-b border-neutral-200">
+                <div className="flex-1">
+                  <h4 className="font-title text-lg font-semibold mb-2 text-neutral-900">
+                    特殊なデザイン・処理
+                  </h4>
+                  <p className="text-neutral-600">
+                    工数の多いデザインやカスタム機能
+                  </p>
+                </div>
+                <div className="text-right ml-8">
+                  <p className="text-xl font-bold text-amber-600">+¥15,000〜</p>
+                </div>
+              </div>
+
+              <div className="flex items-start justify-between py-6">
+                <div className="flex-1">
+                  <h4 className="font-title text-lg font-semibold mb-2 text-neutral-900">
+                    後からの追加・修正
+                  </h4>
+                  <p className="text-neutral-600">
+                    納品後のページ追加やコンテンツ更新
+                  </p>
+                </div>
+                <div className="text-right ml-8">
+                  <p className="text-xl font-bold text-amber-600">要相談</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* サイトタイプ別の目安 */}
+          <div data-text-region>
+            <h3 className="font-title text-2xl font-bold mb-10 text-neutral-900">
+              サイトタイプ別の目安
+            </h3>
+            <div className="space-y-8">
+              <div className="flex justify-between items-start py-4">
+                <div className="flex-1">
+                  <p className="font-semibold text-lg text-neutral-900 mb-2">
+                    ゲーム公式ページ
+                  </p>
+                  <p className="text-neutral-600">
+                    ゲーム紹介・キャラクター・ストーリー等
+                  </p>
+                </div>
+                <p className="text-xl font-bold text-amber-600 ml-8">
+                  ¥70,000〜
+                </p>
+              </div>
+
+              <div className="flex justify-between items-start py-4">
+                <div className="flex-1">
+                  <p className="font-semibold text-lg text-neutral-900 mb-2">
+                    クリエイター・VTuberサイト
+                  </p>
+                  <p className="text-neutral-600">
+                    プロフィール・活動紹介・リンク集等
+                  </p>
+                </div>
+                <p className="text-xl font-bold text-amber-600 ml-8">
+                  ¥60,000〜
+                </p>
+              </div>
+
+              <div className="flex justify-between items-start py-4">
+                <div className="flex-1">
+                  <p className="font-semibold text-lg text-neutral-900 mb-2">
+                    イベントページ
+                  </p>
+                  <p className="text-neutral-600">
+                    イベント告知・タイムテーブル・申込等
+                  </p>
+                </div>
+                <p className="text-xl font-bold text-amber-600 ml-8">
+                  ¥80,000〜
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center space-y-3">
+            <p className="text-neutral-600 text-sm">
+              ※料金は内容により変動します。詳細はお気軽にお問い合わせください。
+            </p>
+            <p className="text-neutral-700 font-semibold">
+              お支払いは Stripe による安全なオンライン決済に対応しています
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* Contact Section */}
+      <Section id="contact" title="CONTACT">
+        <div className="w-full flex justify-center items-center">
+          <ContactForm />
+        </div>
+      </Section>
     </div>
   );
 }

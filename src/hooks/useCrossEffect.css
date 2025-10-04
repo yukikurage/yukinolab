@@ -1,0 +1,33 @@
+@keyframes cross-expand-vertical {
+  0% {
+    width: 3px;
+    transform: rotate(0deg);
+  }
+  60% {
+    width: 3px;
+  }
+  100% {
+    width: 0px;
+  }
+}
+
+@keyframes cross-expand-horizontal {
+  0% {
+    height: 3px;
+    transform: rotate(0deg);
+  }
+  60% {
+    height: 3px;
+  }
+  100% {
+    height: 0px;
+  }
+}
+
+.animate-cross-expand-vertical {
+  animation: cross-expand-vertical 0.1s ease-out forwards;
+}
+
+.animate-cross-expand-horizontal {
+  animation: cross-expand-horizontal 0.1s ease-out forwards;
+}
