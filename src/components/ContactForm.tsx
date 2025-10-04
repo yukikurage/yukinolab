@@ -87,7 +87,7 @@ export default function ContactForm() {
             htmlFor="name"
             className="block text-sm font-semibold text-neutral-700 mb-2"
           >
-            お名前
+            お名前（活動名でも可）
             <input
               type="text"
               id="name"
@@ -110,11 +110,14 @@ export default function ContactForm() {
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  contactMethod: e.target.value as "email" | "discord" | "twitter",
+                  contactMethod: e.target.value as
+                    | "email"
+                    | "discord"
+                    | "twitter",
                   contactInfo: "",
                 })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all cursor-pointer"
             >
               <option value="email">メールアドレス</option>
               <option value="discord">Discord DM</option>
@@ -144,8 +147,8 @@ export default function ContactForm() {
                 formData.contactMethod === "email"
                   ? "example@mail.com"
                   : formData.contactMethod === "discord"
-                    ? "username#1234 または @username"
-                    : "@username"
+                  ? "username#1234 または @username"
+                  : "@username"
               }
             />
           </label>

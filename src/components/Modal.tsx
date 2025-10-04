@@ -37,7 +37,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col"
+        className="bg-white rounded-lg max-w-4xl w-full max-h-[85dvh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 閉じるボタン */}

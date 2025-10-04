@@ -45,7 +45,7 @@ export function useCrossEffect() {
                 left: effect.x,
                 top: 0,
                 width: "3px",
-                height: "100vh",
+                height: "100dvh",
                 transformOrigin: `center ${effect.y}px`,
               }}
             />

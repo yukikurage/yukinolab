@@ -29,24 +29,27 @@ export default function Home() {
   useEffect(() => {
     fetch("/works/works.json")
       .then((res) => res.json())
-      .then((data) => setWorks(data as Work[]))
+      .then((data) => {
+        setWorks(data as Work[]);
+        // 全てのコンテンツを事前に読み込む
+        (data as Work[]).forEach((work) => {
+          fetch(work.contentPath)
+            .then((res) => res.text())
+            .then((text) => {
+              setWorkContents((prev) => ({ ...prev, [work.id]: text }));
+            })
+            .catch((error) => {
+              console.error(`Failed to load content for ${work.id}:`, error);
+              setWorkContents((prev) => ({ ...prev, [work.id]: "" }));
+            });
+        });
+      })
       .catch((error) => console.error("Failed to load works:", error));
   }, []);
 
-  const handleWorkClick = async (work: Work, e: React.MouseEvent) => {
+  const handleWorkClick = (work: Work, e: React.MouseEvent) => {
     trigger(e.clientX, e.clientY);
     setOpenModals((prev) => ({ ...prev, [work.id]: true }));
-
-    if (!workContents[work.id]) {
-      try {
-        const response = await fetch(work.contentPath);
-        const text = await response.text();
-        setWorkContents((prev) => ({ ...prev, [work.id]: text }));
-      } catch (error) {
-        console.error("Failed to load content:", error);
-        setWorkContents((prev) => ({ ...prev, [work.id]: "" }));
-      }
-    }
   };
 
   const handleClose = (workId: string) => {
@@ -120,29 +123,37 @@ export default function Home() {
             </div>
 
             <div className="space-y-4 mb-12">
-              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
-                <span className="text-neutral-700">カスタムデザイン</span>
-                <span className="text-sm text-neutral-500">
-                  求める世界観やデザインに合わせて制作します
-                </span>
+              <div className="border-b border-neutral-100 pb-3">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 md:gap-4">
+                  <span className="text-neutral-700 font-semibold md:font-normal">カスタムデザイン</span>
+                  <span className="text-sm text-neutral-500">
+                    求める世界観やデザインに合わせて制作します
+                  </span>
+                </div>
               </div>
-              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
-                <span className="text-neutral-700">レスポンシブ対応</span>
-                <span className="text-sm text-neutral-500">
-                  スマホ・タブレットから見ても綺麗です
-                </span>
+              <div className="border-b border-neutral-100 pb-3">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 md:gap-4">
+                  <span className="text-neutral-700 font-semibold md:font-normal">レスポンシブ対応</span>
+                  <span className="text-sm text-neutral-500">
+                    スマホ・タブレットから見ても綺麗です
+                  </span>
+                </div>
               </div>
-              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
-                <span className="text-neutral-700">基本ページ</span>
-                <span className="text-sm text-neutral-500">
-                  About / Works / Links が含まれます
-                </span>
+              <div className="border-b border-neutral-100 pb-3">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 md:gap-4">
+                  <span className="text-neutral-700 font-semibold md:font-normal">基本ページ</span>
+                  <span className="text-sm text-neutral-500">
+                    About / Works / Links が含まれます
+                  </span>
+                </div>
               </div>
-              <div className="flex items-baseline justify-between border-b border-neutral-100 pb-3">
-                <span className="text-neutral-700">アニメーション</span>
-                <span className="text-sm text-neutral-500">
-                  基本的な遷移アニメーションなどです
-                </span>
+              <div className="border-b border-neutral-100 pb-3">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 md:gap-4">
+                  <span className="text-neutral-700 font-semibold md:font-normal">アニメーション</span>
+                  <span className="text-sm text-neutral-500">
+                    基本的な遷移アニメーションなどです
+                  </span>
+                </div>
               </div>
             </div>
 

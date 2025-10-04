@@ -51,7 +51,7 @@ export default function ScrollCircle() {
       ref={containerRef}
       className="fixed -bottom-0 left-1/2 overflow-visible h-0 w-0 pointer-events-none -z-15 transition-transform duration-1000 ease-in-out"
       style={{
-        transform: `translateY(calc(-0.95 * 100vh + 3 * 100vh))`,
+        transform: `translateY(calc(-0.95 * 100dvh + 3 * 100dvh))`,
       }}
     >
       <div
@@ -66,8 +66,8 @@ export default function ScrollCircle() {
         <div
           className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-400"
           style={{
-            width: "600vh",
-            height: "600vh",
+            width: "600dvh",
+            height: "600dvh",
           }}
         />
 
@@ -82,7 +82,7 @@ export default function ScrollCircle() {
               style={{
                 width: "100px",
                 height: "3px",
-                transform: `rotate(${angle}deg) translateX(calc(300vh - 40px))`,
+                transform: `rotate(${angle}deg) translateX(calc(300dvh - 40px))`,
               }}
             />
           );

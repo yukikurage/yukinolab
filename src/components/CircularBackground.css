@@ -12,7 +12,7 @@
   left: 0;
   bottom: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   z-index: -10;
   pointer-events: none;
   overflow: hidden;

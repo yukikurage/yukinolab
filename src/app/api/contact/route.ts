@@ -1,19 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-
-type CloudflareEnv = {
-  RATE_LIMIT_KV?: KVNamespace;
-};
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export async function POST(request: NextRequest) {
   try {
     // レート制限チェック（Cloudflare環境のみ）
-    const env = (request as any).env as CloudflareEnv | undefined;
-    const ip = request.headers.get("cf-connecting-ip") || "unknown";
+    const ctx = await getCloudflareContext({ async: true });
+    const env = ctx?.env;
+    const ip =
+      request.headers.get("cf-connecting-ip") ||
+      request.headers.get("x-forwarded-for") ||
+      "unknown";
+
+    console.log("Rate limit debug:", {
+      hasCtx: !!ctx,
+      hasEnv: !!env,
+      hasKV: !!env?.RATE_LIMIT_KV,
+      ip,
+    });
 
     if (env?.RATE_LIMIT_KV && ip !== "unknown") {
       const rateLimitKey = `rate_limit:${ip}`;
       const currentCount = await env.RATE_LIMIT_KV.get(rateLimitKey);
       const count = currentCount ? parseInt(currentCount, 10) : 0;
+
+      console.log(`Rate limit for ${ip}: ${count}/3`);
 
       // 1時間に3回まで
       if (count >= 3) {
@@ -27,6 +37,11 @@ export async function POST(request: NextRequest) {
       // カウントアップ（1時間で期限切れ）
       await env.RATE_LIMIT_KV.put(rateLimitKey, `${count + 1}`, {
         expirationTtl: 3600, // 1時間
+      });
+      console.log(`Rate limit updated for ${ip}: ${count + 1}/3`);
+    } else {
+      console.log("Rate limit skipped:", {
+        reason: !env?.RATE_LIMIT_KV ? "No KV" : "Unknown IP",
       });
     }
 
@@ -65,8 +80,16 @@ export async function POST(request: NextRequest) {
                 color: 0xef4444, // red-500
                 fields: [
                   { name: "お名前", value: name || "未入力", inline: true },
-                  { name: "連絡方法", value: contactMethod || "未入力", inline: true },
-                  { name: "連絡先", value: contactInfo || "未入力", inline: false },
+                  {
+                    name: "連絡方法",
+                    value: contactMethod || "未入力",
+                    inline: true,
+                  },
+                  {
+                    name: "連絡先",
+                    value: contactInfo || "未入力",
+                    inline: false,
+                  },
                   { name: "件名", value: subject || "未入力", inline: false },
                   { name: "内容", value: message || "未入力", inline: false },
                   { name: "ハニーポット値", value: website, inline: false },
@@ -75,7 +98,9 @@ export async function POST(request: NextRequest) {
               },
             ],
           }),
-        }).catch((err) => console.error("Failed to send spam notification:", err));
+        }).catch((err) =>
+          console.error("Failed to send spam notification:", err)
+        );
       }
 
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -117,7 +142,9 @@ export async function POST(request: NextRequest) {
               },
             ],
           }),
-        }).catch((err) => console.error("Failed to send spam notification:", err));
+        }).catch((err) =>
+          console.error("Failed to send spam notification:", err)
+        );
       }
 
       return NextResponse.json(
@@ -168,8 +195,8 @@ export async function POST(request: NextRequest) {
       contactMethod === "email"
         ? "メール"
         : contactMethod === "discord"
-          ? "Discord"
-          : "Twitter (X)";
+        ? "Discord"
+        : "Twitter (X)";
 
     await fetch(webhookUrl, {
       method: "POST",
