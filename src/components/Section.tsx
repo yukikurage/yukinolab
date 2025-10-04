@@ -14,7 +14,7 @@ export default function Section({
   return (
     <section
       id={id}
-      className={`relative min-h-screen w-full flex flex-col items-center justify-center py-20 ${className}`}
+      className={`relative w-full flex flex-col items-center justify-center py-40 ${className}`}
     >
       <h2 className="font-title text-4xl font-semibold mb-12 text-center">
         {title}

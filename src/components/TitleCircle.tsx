@@ -9,7 +9,7 @@ export default function TitleCircle() {
           width="600"
           height="600"
           viewBox="0 0 800 800"
-          className="text-amber-400"
+          className="text-primary-light"
         >
           <circle
             cx="400"
@@ -52,7 +52,7 @@ export default function TitleCircle() {
           width="600"
           height="600"
           viewBox="0 0 800 800"
-          className="text-amber-400"
+          className="text-primary-light"
         >
           <circle
             cx="400"

@@ -24,6 +24,6 @@
   bottom: calc(var(--center-y) - var(--svg-size) / 2);
   width: var(--svg-size);
   height: var(--svg-size);
-  animation: rotate-slow 60s linear infinite;
+  animation: rotate-slow 480s linear reverse infinite;
   transform-origin: var(--origin-x-percent) var(--origin-y-percent);
 }

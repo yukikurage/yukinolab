@@ -2,18 +2,19 @@
 
 import { useCrossEffect } from "@/hooks/useCrossEffect";
 
-interface CardProps {
+type CardProps = {
   children: React.ReactNode;
   className?: string;
   clickable?: boolean;
   "data-text-region"?: boolean;
-}
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Card({
   children,
   className = "",
   clickable = true,
   "data-text-region": dataTextRegion = false,
+  ...props
 }: CardProps) {
   const { trigger, CrossEffectRenderer } = useCrossEffect();
 
@@ -27,9 +28,10 @@ export default function Card({
       <div
         data-text-region={dataTextRegion ? true : undefined}
         onClick={handleClick}
-        className={`border w-full h-full border-neutral-300 bg-white/40 rounded-lg backdrop-blur-2xl p-8 transition-shadow ${
+        className={`border w-full h-full border-border-strong dark:border-primary bg-bg/40 rounded-lg backdrop-blur-2xl transition-shadow ${
           clickable ? "cursor-pointer hover:shadow-lg" : ""
         } ${className}`}
+        {...props}
       >
         {children}
       </div>

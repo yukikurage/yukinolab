@@ -42,13 +42,32 @@ const shadowsIntoLightTwo = Shadows_Into_Light_Two({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
   title: "YUKINOLABO",
-  description: "ホームページ制作サービス YUKINOLABO",
-  icons: [
-    { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
-    { rel: "icon", url: "/favicon.ico", sizes: "any" },
-    { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
-  ],
+  description: "ホームページ制作",
+  icons: [{ rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }],
+  openGraph: {
+    title: "YUKINOLABO",
+    description: "ホームページ制作",
+    url: process.env.NEXT_PUBLIC_SITE_URL,
+    siteName: "YUKINOLABO",
+    locale: "ja_JP",
+    type: "website",
+    images: [
+      {
+        url: "/ogp.png",
+        width: 1200,
+        height: 630,
+        alt: "YUKINOLABO - ホームページ制作",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "YUKINOLABO",
+    description: "ホームページ制作",
+    images: ["/ogp.png"],
+  },
 };
 
 export const viewport: Viewport = {

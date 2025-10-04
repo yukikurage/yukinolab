@@ -28,18 +28,24 @@ export default function WorkModal({
         {/* ヘッダー: 画像 + グラデーション + タイトル・説明 */}
         <div className="relative w-full h-80">
           <Image src={image} alt={title} fill className="object-cover" />
-          {/* グラデーション: 下に向かって白く */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-white z-10" />
+          {/* グラデーション: 下に向かって背景色へ */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              background:
+                "linear-gradient(to bottom, var(--color-overlay-light), var(--color-overlay))",
+            }}
+          />
 
           {/* タイトルと説明 */}
           <div
             data-text-region
             className="absolute inset-0 flex flex-col justify-end px-12 py-4 z-20"
           >
-            <h2 className="font-title text-4xl font-bold mb-4 text-neutral-900">
+            <h2 className="font-title text-4xl font-bold mb-4 text-text">
               {title}
             </h2>
-            <p className="text-neutral-600 text-lg">{description}</p>
+            <p className="text-text-secondary text-lg">{description}</p>
           </div>
         </div>
 
@@ -50,42 +56,42 @@ export default function WorkModal({
               <ReactMarkdown
                 components={{
                   h1: ({ children }) => (
-                    <h1 className="text-2xl font-bold mb-6 text-neutral-900">
+                    <h1 className="text-2xl font-bold mb-6 text-text">
                       {children}
                     </h1>
                   ),
                   h2: ({ children }) => (
-                    <h2 className="text-xl font-semibold mt-8 mb-4 text-neutral-900">
+                    <h2 className="text-xl font-semibold mt-8 mb-4 text-text">
                       {children}
                     </h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-lg font-semibold mt-6 mb-3 text-neutral-800">
+                    <h3 className="text-lg font-semibold mt-6 mb-3 text-text">
                       {children}
                     </h3>
                   ),
                   p: ({ children }) => (
-                    <p className="text-neutral-700 mb-6 leading-relaxed">
+                    <p className="text-text-secondary mb-6 leading-relaxed">
                       {children}
                     </p>
                   ),
                   ul: ({ children }) => (
-                    <ul className="list-disc list-inside mb-6 text-neutral-700 space-y-2 ml-4">
+                    <ul className="list-disc list-inside mb-6 text-text-secondary space-y-2 ml-4">
                       {children}
                     </ul>
                   ),
                   li: ({ children }) => (
-                    <li className="text-neutral-700">{children}</li>
+                    <li className="text-text-secondary">{children}</li>
                   ),
                   strong: ({ children }) => (
-                    <strong className="font-semibold text-neutral-900">
+                    <strong className="font-semibold text-text">
                       {children}
                     </strong>
                   ),
                   a: ({ children, href }) => (
                     <a
                       href={href}
-                      className="text-amber-600 hover:text-amber-700 underline"
+                      className="text-primary hover:text-primary-dark underline"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

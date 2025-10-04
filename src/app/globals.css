@@ -1,30 +1,80 @@
+/* ===========================
+   globals.css  (Tailwind v4)
+   =========================== */
+
 @import "tailwindcss";
 
+@theme {
+  /* ---- fonts (next/font の .variable を参照) ---- */
+  --font-sans: var(--font-noto-sans-jp, ui-sans-serif),
+    var(--font-geist-sans, system-ui), -apple-system, "Segoe UI", "Noto Sans JP",
+    Arial, sans-serif;
+  --font-mono: var(--font-geist-mono, ui-monospace), SFMono-Regular, Menlo,
+    Consolas, "Liberation Mono", monospace;
+  --font-title: var(--font-lexend-exa, ui-sans-serif), "Lexend Exa", system-ui,
+    Arial, sans-serif;
+
+  /* ---- colors (Light) ---- */
+  --color-bg: #ffffff;
+  --color-surface: #fafafa;
+  --color-surface-secondary: #f5f5f5;
+
+  --color-text: #171717; /* 通常テキスト */
+  --color-text-secondary: #525252; /* 補助テキスト */
+  --color-text-tertiary: #737373; /* 三次テキスト */
+
+  --color-border: #e5e5e5;
+  --color-border-strong: #d4d4d4;
+
+  --color-primary: #f59e0b; /* brand */
+  --color-primary-light: #fbbf24;
+  --color-primary-dark: #d97706;
+
+  --color-overlay: rgba(255, 255, 255, 0.9);
+  --color-overlay-light: rgba(255, 255, 255, 0.3);
+}
+
+html.dark {
+  color-scheme: dark; /* ブラウザUI/フォーム既定をダークに */
+  --color-bg: #0a0a0a;
+  --color-surface: #171717;
+  --color-surface-secondary: #262626;
+
+  --color-text: #fafafa;
+  --color-text-secondary: #d4d4d4;
+  --color-text-tertiary: #a3a3a3;
+
+  --color-border: #404040;
+  --color-border-strong: #525252;
+
+  --color-primary: #11d81e;
+  --color-primary-light: #0d8215;
+  --color-primary-dark: #6fde76;
+
+  --color-overlay: rgba(10, 10, 10, 0.9);
+  --color-overlay-light: rgba(10, 10, 10, 0.3);
+}
+
+@custom-variant dark (&:where(html.dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-noto-sans-jp), var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-title: var(--font-lexend-exa);
-  --font-handwriting: var(--font-shadows-into-light-two);
+html {
+  @apply font-sans antialiased;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  @apply bg-bg text-text;
 }
-
 html,
 body {
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+}
+
+/* スクロール横溢れの事故防止（任意） */
+html,
+body {
   overflow-x: hidden;
 }
 

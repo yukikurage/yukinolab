@@ -50,7 +50,7 @@ export default function CircularBackground() {
   return (
     <div
       ref={containerRef}
-      className="circular-background text-amber-400 transition-opacity duration-500 hidden md:block"
+      className="circular-background text-primary-light transition-opacity duration-500 hidden md:block"
       style={{ opacity: 1 }}
     >
       <svg

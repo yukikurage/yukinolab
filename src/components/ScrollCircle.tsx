@@ -17,11 +17,12 @@ export default function ScrollCircle() {
         // containerは画面下端(bottom: 0)が基準、上に行くほど負の値
         // 円のサイズは 600vh、半径は 300vh (= vh * 3)
         // 初期位置: 円の上端が画面上部に配置
-        const initialY = -(vh * 0.95 - vh * 3);
+        const initialY = -(vh * 0.92 - vh * 3);
         // スクロール後: 少し下に移動
         const targetY = -(vh * 0.9 - vh * 3);
-        const translateY = scrollY > vh * 0.5 ? targetY : initialY;
+        const translateY = scrollY > vh * 0.8 ? targetY : initialY;
         containerRef.current.style.transform = `translateY(${translateY}px)`;
+        containerRef.current.style.opacity = scrollY > vh * 0.8 ? "1" : "0";
       }
     };
 
@@ -49,9 +50,10 @@ export default function ScrollCircle() {
   return (
     <div
       ref={containerRef}
-      className="fixed -bottom-0 left-1/2 overflow-visible h-0 w-0 pointer-events-none -z-15 transition-transform duration-1000 ease-in-out"
+      className="fixed -bottom-0 left-1/2 overflow-visible h-0 w-0 pointer-events-none -z-15 transition-all duration-200 ease-in-out"
       style={{
-        transform: `translateY(calc(-0.95 * 100dvh + 3 * 100dvh))`,
+        transform: `translateY(calc(-0.92 * 100dvh + 3 * 100dvh))`,
+        opacity: 0,
       }}
     >
       <div
@@ -64,7 +66,7 @@ export default function ScrollCircle() {
       >
         {/* 円 */}
         <div
-          className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-amber-400"
+          className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-primary-light"
           style={{
             width: "600dvh",
             height: "600dvh",
@@ -78,7 +80,7 @@ export default function ScrollCircle() {
           return (
             <div
               key={`scroll-memory-${i}`}
-              className="absolute top-1/2 left-1/2 origin-left bg-amber-400"
+              className="absolute top-1/2 left-1/2 origin-left bg-primary-light"
               style={{
                 width: "100px",
                 height: "3px",

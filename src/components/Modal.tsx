@@ -37,15 +37,15 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg max-w-4xl w-full max-h-[85dvh] overflow-hidden flex flex-col"
+        className="bg-bg rounded-lg max-w-4xl w-full max-h-[85dvh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 閉じるボタン */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors shadow-lg"
+          className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-bg/90 backdrop-blur-sm rounded-full hover:bg-bg transition-colors shadow-lg"
         >
-          <span className="text-2xl text-neutral-900">×</span>
+          <span className="text-2xl text-text">×</span>
         </button>
 
         {children}

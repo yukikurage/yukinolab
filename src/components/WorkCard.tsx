@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Card from "./Card";
 
 interface WorkCardProps {
   title: string;
@@ -16,9 +17,9 @@ export default function WorkCard({
   onClick,
 }: WorkCardProps) {
   return (
-    <div
+    <Card
       onClick={onClick}
-      className="group cursor-pointer border border-neutral-300 bg-white/40 backdrop-blur-2xl rounded-lg overflow-hidden transition-all hover:shadow-2xl aspect-[4/3] flex flex-col"
+      className="group overflow-hidden transition-all aspect-[2/1] flex flex-col"
     >
       {/* 上半分: 画像 + グラデーション */}
       <div className="absolute overflow-hidden inset-0">
@@ -28,17 +29,23 @@ export default function WorkCard({
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        {/* グラデーション: 下に向かって白く */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white opacity-90 z-10" />
+        {/* グラデーション: 下に向かって背景色へ */}
+        <div
+          className="absolute inset-0 z-10"
+          style={{
+            background:
+              "linear-gradient(to bottom, var(--color-overlay-light), var(--color-overlay))",
+          }}
+        />
       </div>
 
       {/* 下半分: タイトルと説明 */}
       <div className="flex-1 p-6 flex flex-col justify-end z-20">
-        <h3 className="font-title text-2xl font-semibold mb-2 text-neutral-900">
+        <h3 className="font-title text-2xl font-semibold mb-2 text-text">
           {title}
         </h3>
-        <p className="text-neutral-600 text-sm line-clamp-2">{description}</p>
+        <p className="text-text-secondary text-sm line-clamp-2">{description}</p>
       </div>
-    </div>
+    </Card>
   );
 }

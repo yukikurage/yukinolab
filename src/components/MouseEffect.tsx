@@ -104,7 +104,7 @@ export default function MouseEffect() {
       <svg
         key={"mouse-star"}
         ref={mouseStarRef}
-        className="fixed pointer-events-none z-100 text-amber-400 mouse-star"
+        className="fixed pointer-events-none z-100 text-primary-light mouse-star"
         style={{
           transform: "translate3d(0,0,0)",
           transition: "opacity 200ms, transform 200ms",
@@ -127,7 +127,7 @@ export default function MouseEffect() {
         <div key={effect.id}>
           {/* 拡大する円 */}
           <div
-            className="click-effect-circle z-100 shadow-amber-400"
+            className="click-effect-circle z-100 shadow-primary-light"
             style={{
               left: effect.x - 30,
               top: effect.y - 30,
@@ -148,7 +148,7 @@ export default function MouseEffect() {
               width={STAR_CONFIG.viewBox}
               height={STAR_CONFIG.viewBox}
               viewBox={`0 0 ${STAR_CONFIG.viewBox} ${STAR_CONFIG.viewBox}`}
-              className="star-svg text-amber-400"
+              className="star-svg text-primary-light"
             >
               <path
                 d={generateStarPath(

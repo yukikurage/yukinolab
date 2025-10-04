@@ -25,9 +25,9 @@
 }
 
 .animate-cross-expand-vertical {
-  animation: cross-expand-vertical 0.1s ease-out forwards;
+  animation: cross-expand-vertical 0.2s ease-out forwards;
 }
 
 .animate-cross-expand-horizontal {
-  animation: cross-expand-horizontal 0.1s ease-out forwards;
+  animation: cross-expand-horizontal 0.2s ease-out forwards;
 }

@@ -76,7 +76,7 @@ export default function ContactForm() {
   };
 
   return (
-    <Card clickable={false} className="max-w-xl w-full">
+    <Card clickable={false} className="max-w-xl w-full p-8">
       <form
         ref={formRef}
         onSubmit={handleSubmit}
@@ -85,7 +85,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-semibold text-neutral-700 mb-2"
+            className="block text-sm font-semibold text-text-secondary mb-2"
           >
             お名前（活動名でも可）
             <input
@@ -96,7 +96,7 @@ export default function ContactForm() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               placeholder="山田太郎"
             />
           </label>
@@ -117,7 +117,7 @@ export default function ContactForm() {
                   contactInfo: "",
                 })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all cursor-pointer"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all cursor-pointer"
             >
               <option value="email">メールアドレス</option>
               <option value="discord">Discord DM</option>
@@ -129,7 +129,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="contactInfo"
-            className="block text-sm font-semibold text-neutral-700 mb-2"
+            className="block text-sm font-semibold text-text-secondary mb-2"
           >
             {formData.contactMethod === "email" && "メールアドレス"}
             {formData.contactMethod === "discord" && "Discord ユーザー名"}
@@ -142,7 +142,7 @@ export default function ContactForm() {
               onChange={(e) =>
                 setFormData({ ...formData, contactInfo: e.target.value })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               placeholder={
                 formData.contactMethod === "email"
                   ? "example@mail.com"
@@ -157,7 +157,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="subject"
-            className="block text-sm font-semibold text-neutral-700 mb-2"
+            className="block text-sm font-semibold text-text-secondary mb-2"
           >
             件名
             <input
@@ -168,7 +168,7 @@ export default function ContactForm() {
               onChange={(e) =>
                 setFormData({ ...formData, subject: e.target.value })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               placeholder="ホームページ制作の依頼"
             />
           </label>
@@ -177,7 +177,7 @@ export default function ContactForm() {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-semibold text-neutral-700 mb-2"
+            className="block text-sm font-semibold text-text-secondary mb-2"
           >
             お問い合わせ内容
             <textarea
@@ -188,7 +188,7 @@ export default function ContactForm() {
               onChange={(e) =>
                 setFormData({ ...formData, message: e.target.value })
               }
-              className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none transition-all resize-none"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-none"
               placeholder="ご要望や質問などをお書きください"
             />
           </label>
@@ -224,7 +224,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending" || !turnstileVerified}
-          className="w-full bg-amber-600 text-white font-semibold py-4 px-6 rounded-lg hover:bg-amber-700 transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full bg-primary-dark text-bg font-semibold py-4 px-6 rounded-lg hover:bg-primary-dark transition-colors disabled:bg-text-tertiary disabled:cursor-not-allowed cursor-pointer"
         >
           {status === "sending" ? "送信中..." : "送信する"}
         </button>

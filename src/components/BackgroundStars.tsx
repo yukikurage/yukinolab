@@ -82,7 +82,7 @@ export default function BackgroundStars() {
         return (
           <svg
             key={star.id}
-            className="background-star text-amber-400"
+            className="background-star text-primary-light"
             style={{
               left: star.x - star.size / 2 + offsetX,
               top: star.y - star.size / 2 + offsetY,

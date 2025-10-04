@@ -32,7 +32,7 @@ export function useCrossEffect() {
         {effects.map((effect) => (
           <div
             key={effect.id}
-            className="fixed inset-0 pointer-events-none z-100"
+            className="fixed left-0 right-0 pointer-events-none z-100"
             style={{
               left: 0,
               top: 0,
@@ -40,7 +40,7 @@ export function useCrossEffect() {
           >
             {/* 縦の線 */}
             <div
-              className="absolute bg-amber-400 animate-cross-expand-vertical"
+              className="absolute bg-primary-light animate-cross-expand-vertical"
               style={{
                 left: effect.x,
                 top: 0,
@@ -51,7 +51,7 @@ export function useCrossEffect() {
             />
             {/* 横の線 */}
             <div
-              className="absolute bg-amber-400 animate-cross-expand-horizontal"
+              className="absolute bg-primary-light animate-cross-expand-horizontal"
               style={{
                 left: 0,
                 top: effect.y,
