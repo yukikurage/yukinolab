@@ -55,6 +55,7 @@ export default function ScrollCircle() {
         transform: `translateY(calc(-0.92 * 100dvh + 3 * 100dvh))`,
         opacity: 0,
       }}
+      aria-hidden="true"
     >
       <div
         ref={wrapperRef}

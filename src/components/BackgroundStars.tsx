@@ -74,7 +74,7 @@ export default function BackgroundStars() {
   }, [stars.length]);
 
   return (
-    <div className="background-stars">
+    <div className="background-stars" aria-hidden="true">
       {stars.map((star) => {
         const offsetX = (mousePos.x - 0.5) * star.parallaxStrength;
         const offsetY = (mousePos.y - 0.5) * star.parallaxStrength;

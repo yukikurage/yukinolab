@@ -2,7 +2,7 @@
 
 export default function TitleCircle() {
   return (
-    <div className="absolute">
+    <div className="absolute" aria-hidden="true">
       {/* 外側の円（右回り） */}
       <div className="absolute animate-spin-slow -translate-1/2">
         <svg

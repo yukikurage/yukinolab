@@ -52,6 +52,7 @@ export default function CircularBackground() {
       ref={containerRef}
       className="circular-background text-primary-light transition-opacity duration-500 hidden md:block"
       style={{ opacity: 1 }}
+      aria-hidden="true"
     >
       <svg
         className="circular-grid"

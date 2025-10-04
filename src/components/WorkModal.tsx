@@ -24,7 +24,7 @@ export default function WorkModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       {/* スクロール可能なコンテンツ */}
-      <div className="overflow-y-auto">
+      <div className="overflow-y-auto" tabIndex={-1}>
         {/* ヘッダー: 画像 + グラデーション + タイトル・説明 */}
         <div className="relative w-full h-80">
           <Image src={image} alt={title} fill className="object-cover" />
@@ -94,6 +94,7 @@ export default function WorkModal({
                       className="text-primary hover:text-primary-dark underline"
                       target="_blank"
                       rel="noopener noreferrer"
+                      tabIndex={0}
                     >
                       {children}
                     </a>

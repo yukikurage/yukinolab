@@ -98,14 +98,19 @@ export default function ContactForm() {
               }
               className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               placeholder="山田太郎"
+              autoComplete="name"
             />
           </label>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-neutral-700 mb-2">
+          <label
+            htmlFor="contactMethod"
+            className="block text-sm font-semibold text-text-secondary mb-2"
+          >
             ご連絡方法
             <select
+              id="contactMethod"
               value={formData.contactMethod}
               onChange={(e) =>
                 setFormData({
@@ -117,7 +122,7 @@ export default function ContactForm() {
                   contactInfo: "",
                 })
               }
-              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all cursor-pointer"
+              className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all cursor-pointer bg-bg text-text"
             >
               <option value="email">メールアドレス</option>
               <option value="discord">Discord DM</option>
@@ -150,6 +155,7 @@ export default function ContactForm() {
                   ? "username#1234 または @username"
                   : "@username"
               }
+              autoComplete={formData.contactMethod === "email" ? "email" : "off"}
             />
           </label>
         </div>
@@ -230,13 +236,21 @@ export default function ContactForm() {
         </button>
 
         {status === "success" && (
-          <p className="text-green-600 text-center font-semibold">
+          <p
+            className="text-green-600 text-center font-semibold"
+            role="status"
+            aria-live="polite"
+          >
             送信が完了しました！ご連絡ありがとうございます。
           </p>
         )}
 
         {status === "error" && (
-          <p className="text-red-600 text-center font-semibold">
+          <p
+            className="text-red-600 text-center font-semibold"
+            role="alert"
+            aria-live="assertive"
+          >
             送信に失敗しました。もう一度お試しください。
           </p>
         )}

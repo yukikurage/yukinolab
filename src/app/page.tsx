@@ -7,18 +7,19 @@ import AboutSection from "@/components/sections/AboutSection";
 import WorksSection from "@/components/sections/WorksSection";
 import PriceSection from "@/components/sections/PriceSection";
 import ContactSection from "@/components/sections/ContactSection";
-import { useCrossEffect } from "@/hooks/useCrossEffect";
 
 export default function Home() {
   return (
     <div className="relative w-full text-text">
       <div className="fixed inset-0 -z-100 bg-bg transition-colors" />
       <Header />
-      <HeroSection />
-      <AboutSection />
-      <WorksSection />
-      <PriceSection />
-      <ContactSection />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <WorksSection />
+        <PriceSection />
+        <ContactSection />
+      </main>
       <Footer />
     </div>
   );

@@ -31,7 +31,8 @@ export default function DarkModeToggle() {
     <button
       onClick={toggle}
       className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer"
-      aria-label="Toggle dark mode"
+      aria-label={isDark ? "ライトモードに切り替え" : "ダークモードに切り替え"}
+      aria-pressed={isDark}
     >
       {isDark ? (
         <svg
@@ -40,6 +41,7 @@ export default function DarkModeToggle() {
           stroke="currentColor"
           viewBox="0 0 24 24"
           strokeWidth={2}
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -54,6 +56,7 @@ export default function DarkModeToggle() {
           stroke="currentColor"
           viewBox="0 0 24 24"
           strokeWidth={2}
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"

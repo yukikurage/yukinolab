@@ -47,6 +47,8 @@ export default function Header() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="xl:hidden z-50 w-8 h-8 flex flex-col justify-center items-center gap-1.5 cursor-pointer"
             aria-label="メニュー"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
           >
             <span
               className={`w-6 h-0.5 bg-text transition-all duration-300 ${
@@ -66,7 +68,7 @@ export default function Header() {
           </button>
 
           {/* デスクトップナビゲーション（xl以上で表示） */}
-          <nav className="hidden xl:block">
+          <nav className="hidden xl:block" aria-label="メインナビゲーション">
             <ul className="flex gap-8">
               <li>
                 <button
@@ -134,6 +136,7 @@ export default function Header() {
       </header>
       {/* モバイルメニュー */}
       <div
+        id="mobile-menu"
         className={`xl:hidden fixed top-20 left-0 right-0 bottom-0 bg-bg/50 backdrop-blur-lg z-30 border-t border-border
         ${
           isMenuOpen
@@ -141,7 +144,7 @@ export default function Header() {
             : "opacity-0 pointer-events-none"
         } transition-all duration-300`}
       >
-        <nav className="container mx-auto px-8 py-8">
+        <nav className="container mx-auto px-8 py-8" aria-label="モバイルナビゲーション">
           <ul className="space-y-6">
             <li>
               <button

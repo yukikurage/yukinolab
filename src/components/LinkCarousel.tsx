@@ -46,7 +46,8 @@ export default function LinkCarousel() {
       <button
         onClick={handlePrev}
         className="flex items-center justify-center hover:opacity-70 transition-opacity flex-shrink-0 z-10 cursor-pointer h-full"
-        aria-label="Previous link"
+        aria-label="前の作品を表示"
+        disabled={works.length === 0}
       >
         <svg
           className="w-12 h-12 text-primary"
@@ -74,6 +75,7 @@ export default function LinkCarousel() {
             return (
               <button
                 key={`${targetIdx}`}
+                disabled={!work.link}
                 onClick={() => handleClick(work)}
                 className="absolute rounded-lg overflow-hidden border border-border hover:shadow-lg cursor-pointer group h-full aspect-square"
                 style={{
@@ -84,6 +86,10 @@ export default function LinkCarousel() {
                   overflow: "visible",
                   transform: `translateX(${offset}px)`,
                 }}
+                aria-label={
+                  deltaIdx === 0 ? `${work.title} のリンクを開く` : undefined
+                }
+                tabIndex={deltaIdx === 0 ? 0 : -1}
               >
                 {/* Background Image */}
                 <div className="overflow-hidden rounded-lg absolute inset-0">
@@ -141,7 +147,8 @@ export default function LinkCarousel() {
       <button
         onClick={handleNext}
         className="flex items-center justify-center hover:opacity-70 transition-opacity flex-shrink-0 z-10 cursor-pointer"
-        aria-label="Next link"
+        aria-label="次の作品を表示"
+        disabled={works.length === 0}
       >
         <svg
           className="w-12 h-12 text-primary"
