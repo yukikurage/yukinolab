@@ -1,24 +1,9 @@
 // CMS設定ファイル - プロジェクトごとにカスタマイズ可能
 
-export interface CMSField {
-  name: string;
-  label: string;
-  type: "text" | "textarea" | "image" | "url" | "markdown" | "number" | "array";
-  required?: boolean;
-  placeholder?: string;
-  // For array type
-  itemFields?: CMSField[];
-}
+import { CMSCategory } from "./cms/types";
 
-export interface CMSCategory {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  fields: CMSField[];
-  // If true, this is a singleton (single document) instead of a collection
-  singleton?: boolean;
-}
+// 型定義を再エクスポート（後方互換性のため）
+export type { CMSCategory, CMSField, CMSFieldType } from "./cms/types";
 
 // プロジェクトごとにこの設定を変更
 export const CMS_CATEGORIES: CMSCategory[] = [

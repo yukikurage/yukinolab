@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Section from "@/components/Section";
 import Card from "@/components/Card";
+import { useSingleton } from "@/lib/cms/hooks";
 
 interface BaseRate {
   name: string;
@@ -31,24 +31,7 @@ interface PricingData {
 }
 
 export default function PriceSection() {
-  const [pricing, setPricing] = useState<PricingData | null>(null);
-
-  useEffect(() => {
-    fetch("/api/content/pricing/singleton")
-      .then((res) => {
-        if (res.status === 404) {
-          // Use fallback data if not configured yet
-          return null;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setPricing(data as PricingData);
-        }
-      })
-      .catch((error) => console.error("Failed to load pricing:", error));
-  }, []);
+  const { data: pricing } = useSingleton<PricingData>("pricing");
 
   // Fallback to static content if no data from KV
   if (!pricing) {

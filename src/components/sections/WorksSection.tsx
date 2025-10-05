@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Section from "@/components/Section";
 import WorkCard from "@/components/WorkCard";
 import WorkModal from "@/components/WorkModal";
 import { useCrossEffect } from "@/hooks/useCrossEffect";
+import { useContentList } from "@/lib/cms/hooks";
 
 interface Work {
   id: string;
@@ -16,18 +17,9 @@ interface Work {
 }
 
 export default function WorksSection() {
-  const [works, setWorks] = useState<Work[]>([]);
+  const { data: works } = useContentList<Work>("works");
   const [openModals, setOpenModals] = useState<Record<string, boolean>>({});
   const { trigger, CrossEffectRenderer } = useCrossEffect();
-
-  useEffect(() => {
-    fetch("/api/content/works")
-      .then((res) => res.json())
-      .then((data) => {
-        setWorks(data as Work[]);
-      })
-      .catch((error) => console.error("Failed to load works:", error));
-  }, []);
 
   const handleWorkClick = (work: Work, e: React.MouseEvent) => {
     trigger(e.clientX, e.clientY);

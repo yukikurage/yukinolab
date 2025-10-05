@@ -9,6 +9,9 @@ interface CrossEffect {
   y: number;
 }
 
+const TEXT_SELECTOR =
+  'input:not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable=""], [contenteditable="true"], [data-text-region]';
+
 export function useCrossEffect() {
   const [effects, setEffects] = useState<CrossEffect[]>([]);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -28,6 +31,12 @@ export function useCrossEffect() {
   const trigger = useCallback((x: number, y: number) => {
     // prefers-reduced-motion の時はエフェクトを無効化
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    // マウス追従エフェクトが消えている場所（テキスト領域など）ではクリックエフェクトも無効化
+    const elementAtPoint = document.elementFromPoint(x, y);
+    if (elementAtPoint?.closest(TEXT_SELECTOR)) {
       return;
     }
 

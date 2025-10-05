@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useContentList } from "@/lib/cms/hooks";
 
 interface Work {
   id: string;
@@ -12,17 +13,8 @@ interface Work {
 }
 
 export default function LinkCarousel() {
-  const [works, setWorks] = useState<Work[]>([]);
+  const { data: works } = useContentList<Work>("works");
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    fetch("/api/content/works")
-      .then((res) => res.json())
-      .then((data) => {
-        setWorks(data as Work[]);
-      })
-      .catch((error) => console.error("Failed to load works:", error));
-  }, []);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => prev - 1);

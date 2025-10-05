@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getCategoryById } from "@/lib/cms-config";
+import { useContentList, useContentMutation } from "@/lib/cms/hooks";
 
 interface ContentItem {
   id: string;
@@ -13,35 +14,23 @@ interface ContentItem {
 export default function ContentList() {
   const { category } = useParams();
   const categoryConfig = getCategoryById(category as string);
-  const [items, setItems] = useState<ContentItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`/api/content/${category}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setItems(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to load items:", error);
-        setItems([]);
-        setLoading(false);
-      });
-  }, [category]);
+  const { data: items, loading } = useContentList<ContentItem>(category as string);
+  const { remove } = useContentMutation();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     if (!confirm("このアイテムを削除しますか？")) return;
 
-    try {
-      await fetch(`/api/admin/content/${category}/${id}`, {
-        method: "DELETE",
-      });
+    setDeletingId(id);
+    const success = await remove(category as string, id);
 
-      setItems(items.filter((item) => item.id !== id));
+    if (success) {
       alert("削除しました");
-    } catch (error) {
+      // ページをリロードして最新のデータを取得
+      window.location.reload();
+    } else {
       alert("削除に失敗しました");
+      setDeletingId(null);
     }
   };
 
