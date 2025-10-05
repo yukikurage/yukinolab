@@ -5,15 +5,8 @@ export default function DarkModeToggle() {
   const [isDark, setIsDark] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const dark = saved === "dark" || (!saved && prefersDark);
-
-    if (dark) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-
+    // ページロード時にすでにdarkクラスが適用されているかチェック
+    const dark = document.documentElement.classList.contains("dark");
     setIsDark(dark);
   }, []);
 

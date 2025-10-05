@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, CSSProperties, useEffect, useState } from "react";
+import { ReactNode, CSSProperties, useEffect, useState, JSX } from "react";
 import { useMousePosition } from "./useMousePosition";
 
 interface MouseParallaxProps {
@@ -86,8 +86,12 @@ export function MouseParallax({
   const isDisabled = prefersReducedMotion || isTouchDevice;
 
   // マウス位置から中心への差分を計算（-0.5 ~ 0.5）
-  const offsetX = isDisabled ? 0 : (mousePos.x - 0.5) * strength * (invert ? -1 : 1);
-  const offsetY = isDisabled ? 0 : (mousePos.y - 0.5) * strength * (invert ? -1 : 1);
+  const offsetX = isDisabled
+    ? 0
+    : (mousePos.x - 0.5) * strength * (invert ? -1 : 1);
+  const offsetY = isDisabled
+    ? 0
+    : (mousePos.y - 0.5) * strength * (invert ? -1 : 1);
 
   return (
     <Component
