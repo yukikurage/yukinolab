@@ -68,7 +68,7 @@ export const CMS_CATEGORIES: CMSCategory[] = [
         type: "array",
         itemFields: [
           { name: "name", label: "オプション名", type: "text", required: true },
-          { name: "price", label: "料金", type: "number", required: true },
+          { name: "price", label: "料金", type: "text", required: true, placeholder: "例: +¥5,000〜 または 要相談" },
           { name: "unit", label: "単位", type: "text" },
           { name: "description", label: "説明", type: "textarea" },
         ],

@@ -11,7 +11,7 @@ interface BaseRate {
 
 interface Option {
   name: string;
-  price: number;
+  price: string;
   unit?: string;
   description?: string;
 }
@@ -305,7 +305,7 @@ export default function PriceSection() {
                   </div>
                   <div className="text-right ml-8">
                     <p className="text-xl font-bold text-primary-dark">
-                      {option.price === 0 ? "要相談" : `+¥${option.price.toLocaleString()}〜`}
+                      {option.price}
                     </p>
                     {option.unit && (
                       <p className="text-xs text-text-tertiary">{option.unit}</p>

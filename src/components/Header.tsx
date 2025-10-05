@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useCrossEffect } from "@/hooks/useCrossEffect";
+import { WithCrossEffect } from "./WithCrossEffect";
 import DarkModeToggle from "./DarkModeToggle";
 
 interface HeaderProps {
@@ -11,7 +11,6 @@ interface HeaderProps {
 
 export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const { trigger, CrossEffectRenderer } = useCrossEffect();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,14 +30,11 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
     setIsMenuOpen(false); // メニューを閉じる
   };
 
-  const fireClickEffect = (e: React.MouseEvent) => {
-    trigger(e.clientX, e.clientY);
-  };
-
   return (
-    <>
-      <CrossEffectRenderer />
-      <header
+    <WithCrossEffect>
+      {({ fireEffect }) => (
+        <>
+        <header
         className={`fixed top-0 left-0 right-0 z-40 bg-bg/80 backdrop-blur-lg border-b border-border dark:border-primary transition-all duration-300 ${
           isVisible
             ? "translate-y-0 opacity-100"
@@ -79,7 +75,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
                 <button
                   onClick={(e) => {
                     scrollToSection("about");
-                    fireClickEffect(e);
+                    fireEffect(e);
                   }}
                   className="font-title text-lg font-semibold transition-colors hover:text-primary-dark cursor-pointer"
                 >
@@ -90,7 +86,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
                 <button
                   onClick={(e) => {
                     scrollToSection("works");
-                    fireClickEffect(e);
+                    fireEffect(e);
                   }}
                   className="font-title text-lg font-semibold transition-colors hover:text-primary-dark cursor-pointer"
                 >
@@ -101,7 +97,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
                 <button
                   onClick={(e) => {
                     scrollToSection("price");
-                    fireClickEffect(e);
+                    fireEffect(e);
                   }}
                   className="font-title text-lg font-semibold transition-colors hover:text-primary-dark cursor-pointer"
                 >
@@ -112,7 +108,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
                 <button
                   onClick={(e) => {
                     scrollToSection("contact");
-                    fireClickEffect(e);
+                    fireEffect(e);
                   }}
                   className="font-title text-lg font-semibold transition-colors hover:text-primary-dark cursor-pointer"
                 >
@@ -126,7 +122,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
           <button
             onClick={(e) => {
               window.scrollTo({ top: 0, behavior: "smooth" });
-              fireClickEffect(e);
+              fireEffect(e);
             }}
             className="absolute left-1/2 -translate-x-1/2 font-title text-2xl font-bold text-text transition-all hover:text-primary-dark cursor-pointer"
           >
@@ -155,7 +151,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
               <button
                 onClick={(e) => {
                   scrollToSection("about");
-                  fireClickEffect(e);
+                  fireEffect(e);
                 }}
                 className="font-title text-2xl font-semibold transition-colors hover:text-primary-dark cursor-pointer w-full text-left"
               >
@@ -166,7 +162,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
               <button
                 onClick={(e) => {
                   scrollToSection("works");
-                  fireClickEffect(e);
+                  fireEffect(e);
                 }}
                 className="font-title text-2xl font-semibold transition-colors hover:text-primary-dark cursor-pointer w-full text-left"
               >
@@ -177,7 +173,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
               <button
                 onClick={(e) => {
                   scrollToSection("price");
-                  fireClickEffect(e);
+                  fireEffect(e);
                 }}
                 className="font-title text-2xl font-semibold transition-colors hover:text-primary-dark cursor-pointer w-full text-left"
               >
@@ -188,7 +184,7 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
               <button
                 onClick={(e) => {
                   scrollToSection("contact");
-                  fireClickEffect(e);
+                  fireEffect(e);
                 }}
                 className="font-title text-2xl font-semibold transition-colors hover:text-primary-dark cursor-pointer w-full text-left"
               >
@@ -198,6 +194,8 @@ export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
           </ul>
         </nav>
       </div>
-    </>
+      </>
+      )}
+    </WithCrossEffect>
   );
 }

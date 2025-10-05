@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Card from "./Card";
+import { TurnstileField } from "@/lib/ui";
 
 export default function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -17,25 +18,6 @@ export default function ContactForm() {
     "idle" | "sending" | "success" | "error"
   >("idle");
   const [turnstileVerified, setTurnstileVerified] = useState(false);
-
-  useEffect(() => {
-    // Turnstileスクリプト読み込み
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-
-    // コールバック設定
-    (window as any).onTurnstileVerify = () => {
-      setTurnstileVerified(true);
-    };
-
-    return () => {
-      document.body.removeChild(script);
-      delete (window as any).onTurnstileVerify;
-    };
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,11 +203,11 @@ export default function ContactForm() {
           </label>
         </div>
 
-        <div
-          className="cf-turnstile"
-          data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-          data-callback="onTurnstileVerify"
-        ></div>
+        <TurnstileField
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+          onVerify={() => setTurnstileVerified(true)}
+          onError={() => setTurnstileVerified(false)}
+        />
 
         <button
           type="submit"
