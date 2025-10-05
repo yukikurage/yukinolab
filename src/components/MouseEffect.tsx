@@ -111,6 +111,12 @@ export default function MouseEffect() {
         return;
       }
 
+      // マウス追従エフェクトが消えている場所（テキスト領域など）ではクリックエフェクトも無効化
+      const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
+      if (elementAtPoint?.closest(TEXT_SELECTOR)) {
+        return;
+      }
+
       const newEffect = {
         id: Date.now(),
         x: e.clientX,

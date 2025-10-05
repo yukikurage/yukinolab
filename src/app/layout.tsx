@@ -7,11 +7,7 @@ import {
   Shadows_Into_Light_Two,
 } from "next/font/google";
 import "./globals.css";
-import MouseEffect from "@/components/MouseEffect";
-import CircularBackground from "@/components/CircularBackground";
-import BackgroundStars from "@/components/BackgroundStars";
-import PageBackground from "@/components/PageBackground";
-import ScrollCircle from "@/components/ScrollCircle";
+import LayoutEffects from "@/components/LayoutEffects";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -86,11 +82,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSansJP.variable} ${lexendExa.variable} ${shadowsIntoLightTwo.variable} antialiased`}
       >
-        <PageBackground />
-        <CircularBackground />
-        <ScrollCircle />
-        <BackgroundStars />
-        <MouseEffect />
+        <LayoutEffects />
         {children}
       </body>
     </html>
