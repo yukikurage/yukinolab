@@ -1,5 +1,6 @@
 "use client";
 
+import { forwardRef, useImperativeHandle } from "react";
 import { useTurnstile } from "./useTurnstile";
 
 interface TurnstileFieldProps {
@@ -24,29 +25,42 @@ interface TurnstileFieldProps {
   className?: string;
 }
 
+export interface TurnstileFieldRef {
+  reset: () => void;
+}
+
 /**
  * Cloudflare Turnstileフィールドコンポーネント
  *
  * @example
+ * const turnstileRef = useRef<TurnstileFieldRef>(null);
+ *
  * <TurnstileField
+ *   ref={turnstileRef}
  *   siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
  *   onVerify={(token) => console.log('Verified')}
  * />
+ *
+ * // Reset after form submission
+ * turnstileRef.current?.reset();
  */
-export function TurnstileField({
-  siteKey,
-  onVerify,
-  onError,
-  className = "",
-}: TurnstileFieldProps) {
-  useTurnstile({ siteKey, onVerify, onError });
+export const TurnstileField = forwardRef<TurnstileFieldRef, TurnstileFieldProps>(
+  ({ siteKey, onVerify, onError, className = "" }, ref) => {
+    const { reset } = useTurnstile({ siteKey, onVerify, onError });
 
-  return (
-    <div
-      className={`cf-turnstile ${className}`}
-      data-sitekey={siteKey}
-      data-callback="onTurnstileVerify"
-      data-error-callback="onTurnstileError"
-    />
-  );
-}
+    useImperativeHandle(ref, () => ({
+      reset,
+    }));
+
+    return (
+      <div
+        className={`cf-turnstile ${className}`}
+        data-sitekey={siteKey}
+        data-callback="onTurnstileVerify"
+        data-error-callback="onTurnstileError"
+      />
+    );
+  }
+);
+
+TurnstileField.displayName = "TurnstileField";

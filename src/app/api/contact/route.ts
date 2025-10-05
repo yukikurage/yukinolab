@@ -11,38 +11,18 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-forwarded-for") ||
       "unknown";
 
-    console.log("Rate limit debug:", {
-      hasCtx: !!ctx,
-      hasEnv: !!env,
-      hasKV: !!env?.RATE_LIMIT_KV,
-      ip,
-    });
-
     if (env?.RATE_LIMIT_KV && ip !== "unknown") {
       const rateLimitKey = `rate_limit:${ip}`;
       const currentCount = await env.RATE_LIMIT_KV.get(rateLimitKey);
       const count = currentCount ? parseInt(currentCount, 10) : 0;
 
-      console.log(`Rate limit for ${ip}: ${count}/3`);
-
-      // 1時間に3回まで
-      if (count >= 3) {
-        console.log(`Rate limit exceeded for IP: ${ip}`);
+      // 1時間に10回まで
+      if (count >= 10) {
         return NextResponse.json(
           { error: "Too many requests. Please try again later." },
           { status: 429 }
         );
       }
-
-      // カウントアップ（1時間で期限切れ）
-      await env.RATE_LIMIT_KV.put(rateLimitKey, `${count + 1}`, {
-        expirationTtl: 3600, // 1時間
-      });
-      console.log(`Rate limit updated for ${ip}: ${count + 1}/3`);
-    } else {
-      console.log("Rate limit skipped:", {
-        reason: !env?.RATE_LIMIT_KV ? "No KV" : "Unknown IP",
-      });
     }
 
     const {
@@ -65,40 +45,36 @@ export async function POST(request: NextRequest) {
 
     // ハニーポットチェック（botが入力したら拒否）
     if (website) {
-      console.log("Bot detected: honeypot filled");
-
-      // スパム通知
-      const spamWebhookUrl = env.DISCORD_SPAM_WEBHOOK_URL;
-      if (spamWebhookUrl) {
-        await fetch(spamWebhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [
-              {
-                title: "🚫 スパム検知（ハニーポット）",
-                color: 0xef4444, // red-500
-                fields: [
-                  { name: "お名前", value: name || "未入力", inline: true },
-                  {
-                    name: "連絡方法",
-                    value: contactMethod || "未入力",
-                    inline: true,
-                  },
-                  {
-                    name: "連絡先",
-                    value: contactInfo || "未入力",
-                    inline: false,
-                  },
-                  { name: "件名", value: subject || "未入力", inline: false },
-                  { name: "内容", value: message || "未入力", inline: false },
-                  { name: "ハニーポット値", value: website, inline: false },
-                ],
-                timestamp: new Date().toISOString(),
+      // スパム通知（MAIL_PROXY経由）
+      const toEmail = env?.CONTACT_EMAIL;
+      if (toEmail && env?.MAIL_PROXY) {
+        await env.MAIL_PROXY.fetch(
+          new Request("https://dummy/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              personalizations: [{ to: [{ email: toEmail }] }],
+              from: {
+                email: "noreply@yukikurage.net",
+                name: "Yukinolab スパム検知",
               },
-            ],
-          }),
-        }).catch((err) =>
+              subject: "🚫 スパム検知（ハニーポット）",
+              content: [
+                {
+                  type: "text/plain",
+                  value: `
+お名前: ${name || "未入力"}
+連絡方法: ${contactMethod || "未入力"}
+連絡先: ${contactInfo || "未入力"}
+件名: ${subject || "未入力"}
+内容: ${message || "未入力"}
+ハニーポット値: ${website}
+                  `.trim(),
+                },
+              ],
+            }),
+          })
+        ).catch((err) =>
           console.error("Failed to send spam notification:", err)
         );
       }
@@ -117,32 +93,36 @@ export async function POST(request: NextRequest) {
     // スパムフィルタ: URLリンクが多すぎる場合は拒否
     const urlCount = (message.match(/https?:\/\//gi) || []).length;
     if (urlCount > 2) {
-      console.log("Spam detected: too many URLs");
-
-      // スパム通知
-      const spamWebhookUrl = env.DISCORD_SPAM_WEBHOOK_URL;
-      if (spamWebhookUrl) {
-        await fetch(spamWebhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [
-              {
-                title: "🚫 スパム検知（URL過多）",
-                color: 0xef4444, // red-500
-                fields: [
-                  { name: "お名前", value: name, inline: true },
-                  { name: "連絡方法", value: contactMethod, inline: true },
-                  { name: "連絡先", value: contactInfo, inline: false },
-                  { name: "件名", value: subject, inline: false },
-                  { name: "内容", value: message, inline: false },
-                  { name: "URL数", value: `${urlCount}個`, inline: false },
-                ],
-                timestamp: new Date().toISOString(),
+      // スパム通知（MAIL_PROXY経由）
+      const toEmail = env?.CONTACT_EMAIL;
+      if (toEmail && env?.MAIL_PROXY) {
+        await env.MAIL_PROXY.fetch(
+          new Request("https://dummy/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              personalizations: [{ to: [{ email: toEmail }] }],
+              from: {
+                email: "noreply@yukikurage.net",
+                name: "Yukinolab スパム検知",
               },
-            ],
-          }),
-        }).catch((err) =>
+              subject: "🚫 スパム検知（URL過多）",
+              content: [
+                {
+                  type: "text/plain",
+                  value: `
+お名前: ${name}
+連絡方法: ${contactMethod}
+連絡先: ${contactInfo}
+件名: ${subject}
+内容: ${message}
+URL数: ${urlCount}個
+                  `.trim(),
+                },
+              ],
+            }),
+          })
+        ).catch((err) =>
           console.error("Failed to send spam notification:", err)
         );
       }
@@ -182,12 +162,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Discord Webhook送信
-    const webhookUrl = env.DISCORD_WEBHOOK_URL;
+    // MailChannels でメール送信
+    const toEmail = env?.CONTACT_EMAIL;
 
-    if (!webhookUrl) {
-      console.log("DEV MODE - Discord message would be sent:");
-      console.log({ name, contactMethod, contactInfo, subject, message });
+    if (!toEmail) {
       return NextResponse.json({ success: true });
     }
 
@@ -198,26 +176,61 @@ export async function POST(request: NextRequest) {
         ? "Discord"
         : "Twitter (X)";
 
-    await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        embeds: [
-          {
-            title: "📬 お問い合わせ",
-            color: 0xf59e0b,
-            fields: [
-              { name: "お名前", value: name, inline: true },
-              { name: "連絡方法", value: contactMethodLabel, inline: true },
-              { name: "連絡先", value: contactInfo, inline: false },
-              { name: "件名", value: subject, inline: false },
-              { name: "お問い合わせ内容", value: message, inline: false },
-            ],
-            timestamp: new Date().toISOString(),
-          },
-        ],
-      }),
-    });
+    const mailPayload = {
+      personalizations: [
+        {
+          to: [{ email: toEmail }],
+        },
+      ],
+      from: {
+        email: "noreply@yukikurage.net",
+        name: "Yukinolab お問い合わせフォーム",
+      },
+      subject: `【お問い合わせ】${subject}`,
+      content: [
+        {
+          type: "text/plain",
+          value: `
+お名前: ${name}
+連絡方法: ${contactMethodLabel}
+連絡先: ${contactInfo}
+件名: ${subject}
+
+お問い合わせ内容:
+${message}
+          `.trim(),
+        },
+      ],
+    };
+
+    const mailResponse = await env.MAIL_PROXY.fetch(
+      new Request("https://dummy/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mailPayload),
+      })
+    );
+
+    if (!mailResponse.ok) {
+      const text = await mailResponse.text();
+      console.error("MailChannels error:", mailResponse.status, text);
+
+      return NextResponse.json(
+        { error: "Failed to send message" },
+        { status: 500 }
+      );
+    }
+
+    // メール送信成功後にレート制限カウントアップ
+    if (env?.RATE_LIMIT_KV && ip !== "unknown") {
+      const rateLimitKey = `rate_limit:${ip}`;
+      const currentCount = await env.RATE_LIMIT_KV.get(rateLimitKey);
+      const count = currentCount ? parseInt(currentCount, 10) : 0;
+
+      await env.RATE_LIMIT_KV.put(rateLimitKey, `${count + 1}`, {
+        expirationTtl: 3600, // 1時間
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -37,6 +37,7 @@ export {
   useTurnstile,
   TurnstileField,
 } from "./form";
+export type { TurnstileFieldRef } from "./form";
 
 // カスタムhooks
 export {

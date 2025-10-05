@@ -11,6 +11,9 @@
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
   ],
+  "observability": {
+    "enabled": true
+  },
   "assets": {
     "directory": ".open-next/assets",
   },
@@ -20,6 +23,11 @@
       // The service should match the "name" of your worker
       "service": "yukinolabo",
     },
+    {
+      "binding": "MAIL_PROXY",
+      // Mail proxy worker for sending emails
+      "service": "mail-proxy",
+    }
   ],
   "r2_buckets": [
     // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
@@ -45,4 +53,9 @@
       "id": "8bfbccaeadca49088cc0c9c1bca6661b"
     }
   ],
+  // Environment variables (set via: wrangler pages secret put <KEY>)
+  // Note: Values are set in Cloudflare dashboard, these are just type declarations
+  "vars": {
+    "NEXTJS_ENV": "production",
+  }
 }

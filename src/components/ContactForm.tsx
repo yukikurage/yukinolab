@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Card from "./Card";
-import { TurnstileField } from "@/lib/ui";
+import { TurnstileField, TurnstileFieldRef } from "@/lib/ui";
 import { useSingleton } from "@/lib/cms/hooks";
 
 interface SiteSettings {
@@ -13,6 +13,7 @@ interface SiteSettings {
 export default function ContactForm() {
   const { data: settings } = useSingleton<SiteSettings>("settings");
   const formRef = useRef<HTMLFormElement>(null);
+  const turnstileRef = useRef<TurnstileFieldRef>(null);
   const [formData, setFormData] = useState({
     name: "",
     contactMethod: "email" as "email" | "discord" | "twitter",
@@ -68,11 +69,15 @@ export default function ContactForm() {
           message: "",
           website: "",
         });
+        setTurnstileVerified(false);
+        turnstileRef.current?.reset();
       } else {
         setStatus("error");
+        turnstileRef.current?.reset();
       }
     } catch (error) {
       setStatus("error");
+      turnstileRef.current?.reset();
     }
   };
 
@@ -261,6 +266,7 @@ export default function ContactForm() {
 
         {hasTurnstileKey ? (
           <TurnstileField
+            ref={turnstileRef}
             siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
             onVerify={() => setTurnstileVerified(true)}
             onError={() => setTurnstileVerified(false)}

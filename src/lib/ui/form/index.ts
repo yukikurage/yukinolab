@@ -5,3 +5,4 @@
 
 export { useTurnstile } from "./useTurnstile";
 export { TurnstileField } from "./TurnstileField";
+export type { TurnstileFieldRef } from "./TurnstileField";
