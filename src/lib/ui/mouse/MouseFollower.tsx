@@ -51,16 +51,18 @@ export function MouseFollower({
 
   const transition = lag > 0 ? `transform ${lag * 500}ms ease-out` : undefined;
 
+  const transformStyle = `translate3d(${mousePos.x + offset.x}px, ${mousePos.y + offset.y}px, 0)`;
+
   return (
     <div
       className={`fixed pointer-events-none z-50 ${className}`}
       style={{
         left: 0,
         top: 0,
-        transform: `translate3d(${mousePos.x + offset.x}px, ${mousePos.y + offset.y}px, 0)`,
-        transition,
-        willChange: "transform",
         ...style,
+        transform: transformStyle,
+        transition: style.transition || transition,
+        willChange: "transform",
       }}
     >
       {children}

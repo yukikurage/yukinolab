@@ -13,10 +13,12 @@ import { useState, useEffect } from "react";
  * const { x, y } = useMousePosition(true); // 正規化された座標
  */
 export function useMousePosition(normalized = false) {
-  const [position, setPosition] = useState({ x: 0.5, y: 0.5 });
+  const [position, setPosition] = useState(() =>
+    normalized ? { x: 0.5, y: 0.5 } : { x: 0, y: 0 }
+  );
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e: PointerEvent) => {
       if (normalized) {
         setPosition({
           x: e.clientX / window.innerWidth,
@@ -30,8 +32,8 @@ export function useMousePosition(normalized = false) {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("pointermove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handleMouseMove);
   }, [normalized]);
 
   return position;

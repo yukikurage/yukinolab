@@ -89,11 +89,10 @@ export default function MouseEffect({ generateStarPath }: MouseEffectProps) {
       {/* マウス追従の星 - MouseFollowerを使用 */}
       <MouseFollower
         offset={{ x: -20, y: -20 }}
-        className="z-100"
+        className="z-[9999]"
         style={{
           opacity: isOverText ? 0 : 1,
-          transform: isOverText ? "scale(0)" : "scale(1)",
-          transition: "opacity 200ms, transform 200ms",
+          transition: "opacity 200ms",
         }}
       >
         <svg
