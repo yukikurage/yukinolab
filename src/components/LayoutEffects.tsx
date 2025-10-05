@@ -6,6 +6,7 @@ import CircularBackground from "@/components/CircularBackground";
 import BackgroundStars from "@/components/BackgroundStars";
 import PageBackground from "@/components/PageBackground";
 import ScrollCircle from "@/components/ScrollCircle";
+import { generateStarPath } from "@/utils/starPath";
 
 export default function LayoutEffects() {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export default function LayoutEffects() {
       <CircularBackground />
       <ScrollCircle />
       <BackgroundStars />
-      <MouseEffect />
+      <MouseEffect generateStarPath={generateStarPath} />
     </>
   );
 }

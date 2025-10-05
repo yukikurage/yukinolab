@@ -13,6 +13,7 @@ export type CMSFieldType =
   | "url"
   | "markdown"
   | "number"
+  | "boolean"
   | "array";
 
 /**

@@ -85,6 +85,27 @@ export const CMS_CATEGORIES: CMSCategory[] = [
       },
     ],
   },
+  {
+    id: "settings",
+    name: "設定",
+    icon: "⚙️",
+    description: "サイト全体の設定",
+    singleton: true,
+    fields: [
+      {
+        name: "acceptingOrders",
+        label: "依頼受付状態",
+        type: "boolean",
+        required: true,
+      },
+      {
+        name: "closedMessage",
+        label: "受付停止時のメッセージ",
+        type: "textarea",
+        placeholder: "例: 現在、新規のご依頼を一時的に停止しております。",
+      },
+    ],
+  },
 ];
 
 export function getCategoryById(id: string) {

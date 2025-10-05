@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface UseTurnstileOptions {
   /**
@@ -37,11 +37,36 @@ export function useTurnstile({
   const [token, setToken] = useState<string>("");
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // 最新のコールバックを保持
+  const onVerifyRef = useRef(onVerify);
+  const onErrorRef = useRef(onError);
+
   useEffect(() => {
+    onVerifyRef.current = onVerify;
+    onErrorRef.current = onError;
+  }, [onVerify, onError]);
+
+  useEffect(() => {
+    // グローバルコールバック関数を先に登録（Turnstileウィジェットレンダリング前に必要）
+    (window as any).onTurnstileVerify = (responseToken: string) => {
+      setIsVerified(true);
+      setToken(responseToken);
+      onVerifyRef.current?.(responseToken);
+    };
+
+    (window as any).onTurnstileError = () => {
+      setIsVerified(false);
+      setToken("");
+      onErrorRef.current?.();
+    };
+
     // スクリプトが既に読み込まれているかチェック
     if (document.querySelector('script[src*="turnstile"]')) {
       setIsLoaded(true);
-      return;
+      return () => {
+        delete (window as any).onTurnstileVerify;
+        delete (window as any).onTurnstileError;
+      };
     }
 
     // Turnstileスクリプト読み込み
@@ -53,31 +78,11 @@ export function useTurnstile({
     document.body.appendChild(script);
 
     return () => {
+      delete (window as any).onTurnstileVerify;
+      delete (window as any).onTurnstileError;
       // スクリプトは他のコンポーネントでも使う可能性があるので削除しない
     };
   }, []);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    // グローバルコールバック関数を登録
-    (window as any).onTurnstileVerify = (responseToken: string) => {
-      setIsVerified(true);
-      setToken(responseToken);
-      onVerify?.(responseToken);
-    };
-
-    (window as any).onTurnstileError = () => {
-      setIsVerified(false);
-      setToken("");
-      onError?.();
-    };
-
-    return () => {
-      delete (window as any).onTurnstileVerify;
-      delete (window as any).onTurnstileError;
-    };
-  }, [isLoaded, onVerify, onError]);
 
   /**
    * Turnstileをリセット

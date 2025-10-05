@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimationTrigger } from "@/lib/ui";
+import { AnimationTrigger, usePrefersReducedMotion } from "@/lib/ui";
 import { CrossEffect } from "./CrossEffect";
-import { useEffect, useState, ReactNode } from "react";
+import { ReactNode } from "react";
 
 const TEXT_SELECTOR =
   'input:not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable=""], [contenteditable="true"], [data-text-region]';
@@ -16,19 +16,7 @@ interface WithCrossEffectProps {
  * 子要素にfireEffect関数を渡す
  */
 export function WithCrossEffect({ children }: WithCrossEffectProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   return (
     <AnimationTrigger<{ x: number; y: number }>

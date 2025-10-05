@@ -147,9 +147,9 @@ export default function ContentForm({
   };
 
   const handleSubmit = () => {
-    // 必須フィールドチェック
+    // 必須フィールドチェック（null/undefinedのみをチェック、false/0は許可）
     const missingFields = fields
-      .filter((f) => f.required && !formData[f.name])
+      .filter((f) => f.required && formData[f.name] == null)
       .map((f) => f.label);
 
     if (missingFields.length > 0) {
@@ -243,6 +243,20 @@ export default function ContentForm({
               className="w-full px-4 py-3 border border-border-strong rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-bg text-text"
               placeholder={field.placeholder}
             />
+          )}
+
+          {field.type === "boolean" && (
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={(formData[field.name] as boolean) || false}
+                onChange={(e) => handleChange(field.name, e.target.checked)}
+                className="w-5 h-5 border-2 border-border-strong rounded focus:ring-2 focus:ring-primary cursor-pointer"
+              />
+              <span className="text-text-secondary text-sm">
+                {field.placeholder || "有効にする"}
+              </span>
+            </label>
           )}
 
           {field.type === "array" && field.itemFields && (

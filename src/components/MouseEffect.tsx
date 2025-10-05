@@ -1,186 +1,134 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  usePrefersReducedMotion,
+  useIsTouchDevice,
+  MouseFollower,
+  useAnimatedElements,
+} from "@/lib/ui";
 import "./MouseEffect.css";
-import { generateStarPath } from "@/utils/starPath";
 
-interface Effect {
-  id: number;
-  x: number;
-  y: number;
+interface MouseEffectProps {
+  /** 星の形状パス生成関数 */
+  generateStarPath: (
+    size: number,
+    spikeLength: number,
+    curvature: number,
+    cornerRadius: number
+  ) => string;
 }
-
-// 星の形状パラメータ
-const STAR_CONFIG = {
-  viewBox: 200, // SVGのviewBoxサイズ
-  initial: {
-    spikeLength: 60, // 初期の突起の長さ
-    curvature: 30, // 突起のカーブの強さ
-    cornerRadius: 2, // 角の丸み
-  },
-  final: {
-    spikeLength: 20, // 最終的な突起の長さ
-    curvature: 2, // 最終的なカーブの強さ
-    cornerRadius: 2, // 角の丸み
-  },
-};
 
 const TEXT_SELECTOR =
   'input:not([type="button"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable=""], [contenteditable="true"], [data-text-region]';
 
-export default function MouseEffect() {
-  const [effects, setEffects] = useState<Effect[]>([]);
-  const mouseStarRef = useRef<SVGSVGElement>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+const STAR_CONFIG = {
+  viewBox: 200,
+  initial: {
+    spikeLength: 60,
+    curvature: 30,
+    cornerRadius: 2,
+  },
+  final: {
+    spikeLength: 20,
+    curvature: 2,
+    cornerRadius: 2,
+  },
+};
 
+/**
+ * マウスクリックエフェクトコンポーネント（このプロジェクト固有）
+ * - MouseFollowerで星がマウスを追従
+ * - useAnimatedElementsでクリック時のエフェクト
+ */
+export default function MouseEffect({ generateStarPath }: MouseEffectProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const isTouchDevice = useIsTouchDevice();
+  const [isOverText, setIsOverText] = useState(false);
+  const { elements, trigger } = useAnimatedElements<{ x: number; y: number }>({
+    duration: 1000,
+  });
+
+  // マウス位置がテキスト領域上かチェック
   useEffect(() => {
-    // prefers-reduced-motion チェック
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    // タッチデバイス判定
-    const handleTouchStart = () => {
-      setIsTouchDevice(true);
-    };
-
-    window.addEventListener("touchstart", handleTouchStart, { once: true });
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-      window.removeEventListener("touchstart", handleTouchStart);
-    };
-  }, []);
-
-  useEffect(() => {
-    // prefers-reduced-motion またはタッチデバイスの時は無効化
     if (prefersReducedMotion || isTouchDevice) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (mouseStarRef.current) {
-        mouseStarRef.current.style.left = `${e.clientX - 20}px`;
-        mouseStarRef.current.style.top = `${e.clientY - 20}px`;
-
-        const t = e.target as HTMLElement;
-        const overText = !!document
-          .elementFromPoint(e.clientX, e.clientY)
-          ?.closest(TEXT_SELECTOR);
-        const shouldHide = overText;
-
-        mouseStarRef.current.style.transform = `translate3d(${
-          e.clientX - 20
-        }px, ${e.clientY - 20}px, 0) ${shouldHide ? "scale(0)" : "scale(1)"}`;
-        mouseStarRef.current.style.opacity = shouldHide ? "0" : "1";
-      }
+      const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
+      setIsOverText(!!elementAtPoint?.closest(TEXT_SELECTOR));
     };
-
-    const handlePointerOver = (e: PointerEvent) => {
-      handleMouseMove(e);
-    };
-    const handlePointerOut = (e: PointerEvent) => {
-      handleMouseMove(e);
-    };
-
-    window.addEventListener("pointerover", handlePointerOver);
-
-    window.addEventListener("pointerout", handlePointerOut);
 
     window.addEventListener("pointermove", handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener("pointermove", handleMouseMove);
-      window.removeEventListener("pointerover", handlePointerOver);
-      window.removeEventListener("pointerout", handlePointerOut);
-    };
+    return () => window.removeEventListener("pointermove", handleMouseMove);
   }, [prefersReducedMotion, isTouchDevice]);
 
-  // マウスクリックでエフェクトを追加（グローバル軌跡用）
+  // グローバルなクリックイベントをリスニング
   useEffect(() => {
-    // prefers-reduced-motion の時は無効化
     if (prefersReducedMotion) return;
 
     const handleClick = (e: MouseEvent) => {
       // フォーム内のクリックは無効化
       const target = e.target as HTMLElement;
-      if (target.closest("form")) {
-        return;
-      }
+      if (target.closest("form")) return;
 
-      // マウス追従エフェクトが消えている場所（テキスト領域など）ではクリックエフェクトも無効化
+      // テキスト領域ではエフェクトをスキップ
       const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
-      if (elementAtPoint?.closest(TEXT_SELECTOR)) {
-        return;
-      }
+      if (elementAtPoint?.closest(TEXT_SELECTOR)) return;
 
-      const newEffect = {
-        id: Date.now(),
-        x: e.clientX,
-        y: e.clientY,
-      };
-      setEffects((prev) => [...prev, newEffect]);
-
-      // アニメーション終了後に削除
-      setTimeout(() => {
-        setEffects((prev) =>
-          prev.filter((effect) => effect.id !== newEffect.id)
-        );
-      }, 1000);
+      trigger({ x: e.clientX, y: e.clientY });
     };
 
     window.addEventListener("click", handleClick);
     return () => window.removeEventListener("click", handleClick);
-  }, [prefersReducedMotion]);
+  }, [prefersReducedMotion, trigger]);
 
-  // prefers-reduced-motion またはタッチデバイスの時は何も表示しない
   if (prefersReducedMotion || isTouchDevice) return null;
 
   return (
     <>
-      {/* マウス追従の星 */}
-      <svg
-        key={"mouse-star"}
-        ref={mouseStarRef}
-        className="fixed pointer-events-none z-100 text-primary-light mouse-star"
+      {/* マウス追従の星 - MouseFollowerを使用 */}
+      <MouseFollower
+        offset={{ x: -20, y: -20 }}
+        className="z-100"
         style={{
-          transform: "translate3d(0,0,0)",
+          opacity: isOverText ? 0 : 1,
+          transform: isOverText ? "scale(0)" : "scale(1)",
           transition: "opacity 200ms, transform 200ms",
-          willChange: "transform, opacity",
         }}
-        width={40}
-        height={40}
-        viewBox="0 0 40 40"
       >
-        <path
-          d="M 20,5 Q 22,18 35,20 Q 22,22 20,35 Q 18,22 5,20 Q 18,18 20,5 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-      </svg>
+        <svg
+          className="text-primary-light mouse-star"
+          width={40}
+          height={40}
+          viewBox="0 0 40 40"
+        >
+          <path
+            d="M 20,5 Q 22,18 35,20 Q 22,22 20,35 Q 18,22 5,20 Q 18,18 20,5 Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          />
+        </svg>
+      </MouseFollower>
 
-      {/* クリックで生成されるグローバル軌跡 */}
-      {effects.map((effect) => (
-        <div key={effect.id}>
+      {/* クリックエフェクト - useAnimatedElementsで管理 */}
+      {elements.map((el) => (
+        <div key={el.id}>
           {/* 拡大する円 */}
           <div
             className="click-effect-circle z-100 shadow-primary-light"
             style={{
-              left: effect.x - 30,
-              top: effect.y - 30,
+              left: el.data.x - 30,
+              top: el.data.y - 30,
             }}
           />
 
-          {/* 回転縮小する星（突起が長い十字型） */}
+          {/* 回転縮小する星 */}
           <div
             className="click-effect-star z-100"
             style={{
-              left: effect.x - STAR_CONFIG.viewBox / 2,
-              top: effect.y - STAR_CONFIG.viewBox / 2,
+              left: el.data.x - STAR_CONFIG.viewBox / 2,
+              top: el.data.y - STAR_CONFIG.viewBox / 2,
               width: STAR_CONFIG.viewBox,
               height: STAR_CONFIG.viewBox,
             }}

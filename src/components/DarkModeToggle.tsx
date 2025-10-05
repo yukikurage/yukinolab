@@ -1,28 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useTheme } from "@/lib/ui";
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState<boolean | null>(null);
+  const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    // ページロード時にすでにdarkクラスが適用されているかチェック
-    const dark = document.documentElement.classList.contains("dark");
-    setIsDark(dark);
-  }, []);
+  if (theme == null) return null; // 初期レンダ時にちらつきを防ぐ
 
-  const toggle = () => {
-    if (isDark == null) return; // 初期化前なら無視
-    const next = !isDark;
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("theme", next ? "dark" : "light");
-    setIsDark(next);
-  };
-
-  if (isDark == null) return null; // 初期レンダ時にちらつきを防ぐ
+  const isDark = theme === "dark";
 
   return (
     <button
-      onClick={toggle}
+      onClick={toggleTheme}
       className="w-10 h-10 flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer"
       aria-label={isDark ? "ライトモードに切り替え" : "ダークモードに切り替え"}
       aria-pressed={isDark}

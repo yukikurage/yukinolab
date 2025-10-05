@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import "./BackgroundStars.css";
 import { generateStarPath } from "@/utils/starPath";
+import { usePrefersReducedMotion, useIsTouchDevice } from "@/lib/ui";
 
 interface Star {
   id: number;
@@ -30,35 +31,11 @@ const STAR_CONFIG = {
 export default function BackgroundStars() {
   const [stars, setStars] = useState<Star[]>([]);
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const isTouchDevice = useIsTouchDevice();
 
   useEffect(() => {
-    // prefers-reduced-motion チェック
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    // タッチデバイス判定
-    const handleTouchStart = () => {
-      setIsTouchDevice(true);
-    };
-
-    window.addEventListener("touchstart", handleTouchStart, { once: true });
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-      window.removeEventListener("touchstart", handleTouchStart);
-    };
-  }, []);
-
-  useEffect(() => {
-    // prefers-reduced-motion またはタッチデバイスの時は無効化
+    // prefers-reduced-motion またはタッチデバイスの時はマウスパララックス無効化
     if (prefersReducedMotion || isTouchDevice) return;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -73,7 +50,7 @@ export default function BackgroundStars() {
   }, [prefersReducedMotion, isTouchDevice]);
 
   useEffect(() => {
-    // prefers-reduced-motion の時は無効化
+    // prefers-reduced-motion の時は星の生成を無効化
     if (prefersReducedMotion) return;
 
     const spawnStar = () => {

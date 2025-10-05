@@ -3,8 +3,15 @@
 import { useRef, useState } from "react";
 import Card from "./Card";
 import { TurnstileField } from "@/lib/ui";
+import { useSingleton } from "@/lib/cms/hooks";
+
+interface SiteSettings {
+  acceptingOrders: boolean;
+  closedMessage?: string;
+}
 
 export default function ContactForm() {
+  const { data: settings } = useSingleton<SiteSettings>("settings");
   const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -18,6 +25,18 @@ export default function ContactForm() {
     "idle" | "sending" | "success" | "error"
   >("idle");
   const [turnstileVerified, setTurnstileVerified] = useState(false);
+
+  // Turnstileキーの有効性をチェック
+  const hasTurnstileKey = Boolean(
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY &&
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY.trim() !== ""
+  );
+
+  // 受付停止中かチェック（デフォルトは受付中）
+  const isAcceptingOrders = settings?.acceptingOrders ?? true;
+  const closedMessage =
+    settings?.closedMessage ||
+    "現在、新規のご依頼を一時的に停止しております。再開までしばらくお待ちください。";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +75,43 @@ export default function ContactForm() {
       setStatus("error");
     }
   };
+
+  // 受付停止中の場合
+  if (!isAcceptingOrders) {
+    return (
+      <Card clickable={false} className="max-w-xl w-full p-8">
+        <div className="text-center space-y-6" data-text-region>
+          <div className="mb-6">
+            <div className="inline-block p-4 bg-surface-secondary rounded-full mb-4">
+              <svg
+                className="w-12 h-12 text-text-secondary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-text mb-3">
+              現在、ご依頼を受け付けておりません
+            </h3>
+            <p className="text-text-secondary whitespace-pre-wrap">
+              {closedMessage}
+            </p>
+          </div>
+          <p className="text-sm text-text-tertiary">
+            再開時期につきましては、X（Twitter）等でお知らせいたします。
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card clickable={false} className="max-w-xl w-full p-8">
@@ -203,15 +259,21 @@ export default function ContactForm() {
           </label>
         </div>
 
-        <TurnstileField
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onVerify={() => setTurnstileVerified(true)}
-          onError={() => setTurnstileVerified(false)}
-        />
+        {hasTurnstileKey ? (
+          <TurnstileField
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onVerify={() => setTurnstileVerified(true)}
+            onError={() => setTurnstileVerified(false)}
+          />
+        ) : (
+          <div className="text-sm text-text-tertiary">
+            開発環境: Turnstile認証なし
+          </div>
+        )}
 
         <button
           type="submit"
-          disabled={status === "sending" || !turnstileVerified}
+          disabled={status === "sending" || (hasTurnstileKey && !turnstileVerified)}
           className="w-full bg-primary-dark text-bg font-semibold py-4 px-6 rounded-lg hover:bg-primary-dark transition-colors disabled:bg-text-tertiary disabled:cursor-not-allowed cursor-pointer"
         >
           {status === "sending" ? "送信中..." : "送信する"}
