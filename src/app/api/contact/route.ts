@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       console.log("Bot detected: honeypot filled");
 
       // スパム通知
-      const spamWebhookUrl = process.env.DISCORD_SPAM_WEBHOOK_URL;
+      const spamWebhookUrl = env.DISCORD_SPAM_WEBHOOK_URL;
       if (spamWebhookUrl) {
         await fetch(spamWebhookUrl, {
           method: "POST",
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
       console.log("Spam detected: too many URLs");
 
       // スパム通知
-      const spamWebhookUrl = process.env.DISCORD_SPAM_WEBHOOK_URL;
+      const spamWebhookUrl = env.DISCORD_SPAM_WEBHOOK_URL;
       if (spamWebhookUrl) {
         await fetch(spamWebhookUrl, {
           method: "POST",
@@ -154,8 +154,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Turnstile検証（本番環境のみ）
-    if (process.env.NODE_ENV === "production" && turnstileToken) {
-      const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    if (env.NEXTJS_ENV === "production" && turnstileToken) {
+      const turnstileSecret = env.TURNSTILE_SECRET;
       if (turnstileSecret) {
         const verifyResponse = await fetch(
           "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Discord Webhook送信
-    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    const webhookUrl = env.DISCORD_WEBHOOK_URL;
 
     if (!webhookUrl) {
       console.log("DEV MODE - Discord message would be sent:");

@@ -7,7 +7,7 @@ interface Work {
   title: string;
   description: string;
   image: string;
-  contentPath: string;
+  content: string;
   link?: string;
 }
 
@@ -16,7 +16,7 @@ export default function LinkCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("/works/works.json")
+    fetch("/api/content/works")
       .then((res) => res.json())
       .then((data) => {
         setWorks(data as Work[]);

@@ -31,8 +31,37 @@ const TEXT_SELECTOR =
 export default function MouseEffect() {
   const [effects, setEffects] = useState<Effect[]>([]);
   const mouseStarRef = useRef<SVGSVGElement>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
+    // prefers-reduced-motion チェック
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    // タッチデバイス判定
+    const handleTouchStart = () => {
+      setIsTouchDevice(true);
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, { once: true });
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+      window.removeEventListener("touchstart", handleTouchStart);
+    };
+  }, []);
+
+  useEffect(() => {
+    // prefers-reduced-motion またはタッチデバイスの時は無効化
+    if (prefersReducedMotion || isTouchDevice) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (mouseStarRef.current) {
         mouseStarRef.current.style.left = `${e.clientX - 20}px`;
@@ -68,10 +97,13 @@ export default function MouseEffect() {
       window.removeEventListener("pointerover", handlePointerOver);
       window.removeEventListener("pointerout", handlePointerOut);
     };
-  }, []);
+  }, [prefersReducedMotion, isTouchDevice]);
 
   // マウスクリックでエフェクトを追加（グローバル軌跡用）
   useEffect(() => {
+    // prefers-reduced-motion の時は無効化
+    if (prefersReducedMotion) return;
+
     const handleClick = (e: MouseEvent) => {
       // フォーム内のクリックは無効化
       const target = e.target as HTMLElement;
@@ -96,7 +128,10 @@ export default function MouseEffect() {
 
     window.addEventListener("click", handleClick);
     return () => window.removeEventListener("click", handleClick);
-  }, []);
+  }, [prefersReducedMotion]);
+
+  // prefers-reduced-motion またはタッチデバイスの時は何も表示しない
+  if (prefersReducedMotion || isTouchDevice) return null;
 
   return (
     <>

@@ -1,8 +1,58 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Section from "@/components/Section";
 import Card from "@/components/Card";
 
+interface BaseRate {
+  name: string;
+  description?: string;
+}
+
+interface Option {
+  name: string;
+  price: number;
+  unit?: string;
+  description?: string;
+}
+
+interface SiteTypeExample {
+  type: string;
+  priceRange: string;
+  description?: string;
+}
+
+interface PricingData {
+  baseDescription?: string;
+  baseRates: BaseRate[];
+  basePrice: number;
+  options: Option[];
+  siteTypeExamples: SiteTypeExample[];
+}
+
 export default function PriceSection() {
-  return (
+  const [pricing, setPricing] = useState<PricingData | null>(null);
+
+  useEffect(() => {
+    fetch("/api/content/pricing/singleton")
+      .then((res) => {
+        if (res.status === 404) {
+          // Use fallback data if not configured yet
+          return null;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data) {
+          setPricing(data as PricingData);
+        }
+      })
+      .catch((error) => console.error("Failed to load pricing:", error));
+  }, []);
+
+  // Fallback to static content if no data from KV
+  if (!pricing) {
+    return (
     <Section
       id="price"
       title="PRICE"
@@ -188,6 +238,127 @@ export default function PriceSection() {
             </div>
           </div>
         </div>
+
+        <div className="text-center space-y-3">
+          <p className="text-text-secondary text-sm">
+            ※料金は内容により変動します。詳細はお気軽にお問い合わせください。
+          </p>
+          <p className="text-text-secondary font-semibold">
+            お支払いは Stripe による安全なオンライン決済に対応しています
+          </p>
+        </div>
+      </div>
+    </Section>
+    );
+  }
+
+  // Render with dynamic data from KV
+  return (
+    <Section
+      id="price"
+      title="PRICE"
+      className="bg-surface-secondary/50 backdrop-blur-lg relative overflow-hidden"
+    >
+      <div className="max-w-4xl mx-auto space-y-16 relative z-10">
+        {/* 基本料金 */}
+        <Card data-text-region clickable={false} className="border bg-bg p-8">
+          <div className="mb-12">
+            <h3 className="font-title text-2xl font-bold mb-6 text-text">
+              基本料金
+            </h3>
+            {pricing.baseDescription && (
+              <p className="text-text-secondary mb-4 leading-relaxed">
+                {pricing.baseDescription}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-4 mb-12">
+            {pricing.baseRates.map((rate, index) => (
+              <div key={index} className="border-b border-surface-secondary pb-3">
+                <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 md:gap-4">
+                  <span className="text-text-secondary font-semibold md:font-normal">
+                    {rate.name}
+                  </span>
+                  {rate.description && (
+                    <span className="text-sm text-text-tertiary">
+                      {rate.description}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-right">
+            <p className="text-sm text-text-tertiary mb-1">基本料金</p>
+            <p className="text-3xl font-bold text-primary-dark">
+              ¥{pricing.basePrice.toLocaleString()}〜
+            </p>
+          </div>
+        </Card>
+
+        {/* 追加オプション */}
+        {pricing.options.length > 0 && (
+          <div data-text-region>
+            <h3 className="font-title text-2xl font-bold mb-10 text-text">
+              追加オプション
+            </h3>
+            <div className="space-y-6">
+              {pricing.options.map((option, index) => (
+                <div
+                  key={index}
+                  className={`flex items-start justify-between py-6 ${
+                    index < pricing.options.length - 1 ? "border-b border-border" : ""
+                  }`}
+                >
+                  <div className="flex-1">
+                    <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                      {option.name}
+                    </h4>
+                    {option.description && (
+                      <p className="text-text-secondary">{option.description}</p>
+                    )}
+                  </div>
+                  <div className="text-right ml-8">
+                    <p className="text-xl font-bold text-primary-dark">
+                      {option.price === 0 ? "要相談" : `+¥${option.price.toLocaleString()}〜`}
+                    </p>
+                    {option.unit && (
+                      <p className="text-xs text-text-tertiary">{option.unit}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* サイトタイプ別の目安 */}
+        {pricing.siteTypeExamples.length > 0 && (
+          <div data-text-region>
+            <h3 className="font-title text-2xl font-bold mb-10 text-text">
+              サイトタイプ別の目安
+            </h3>
+            <div className="space-y-8">
+              {pricing.siteTypeExamples.map((example, index) => (
+                <div key={index} className="flex justify-between items-start py-4">
+                  <div className="flex-1">
+                    <p className="font-semibold text-lg text-text mb-2">
+                      {example.type}
+                    </p>
+                    {example.description && (
+                      <p className="text-text-secondary">{example.description}</p>
+                    )}
+                  </div>
+                  <p className="text-xl font-bold text-primary-dark ml-8">
+                    {example.priceRange}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="text-center space-y-3">
           <p className="text-text-secondary text-sm">

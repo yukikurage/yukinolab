@@ -11,32 +11,20 @@ interface Work {
   title: string;
   description: string;
   image: string;
-  contentPath: string;
+  content: string;
+  link?: string;
 }
 
 export default function WorksSection() {
   const [works, setWorks] = useState<Work[]>([]);
   const [openModals, setOpenModals] = useState<Record<string, boolean>>({});
-  const [workContents, setWorkContents] = useState<Record<string, string>>({});
   const { trigger, CrossEffectRenderer } = useCrossEffect();
 
   useEffect(() => {
-    fetch("/works/works.json")
+    fetch("/api/content/works")
       .then((res) => res.json())
       .then((data) => {
         setWorks(data as Work[]);
-        // 全てのコンテンツを事前に読み込む
-        (data as Work[]).forEach((work) => {
-          fetch(work.contentPath)
-            .then((res) => res.text())
-            .then((text) => {
-              setWorkContents((prev) => ({ ...prev, [work.id]: text }));
-            })
-            .catch((error) => {
-              console.error(`Failed to load content for ${work.id}:`, error);
-              setWorkContents((prev) => ({ ...prev, [work.id]: "" }));
-            });
-        });
       })
       .catch((error) => console.error("Failed to load works:", error));
   }, []);
@@ -78,7 +66,7 @@ export default function WorksSection() {
           title={work.title}
           description={work.description}
           image={work.image}
-          content={workContents[work.id] || ""}
+          content={work.content || ""}
         />
       ))}
     </>

@@ -1,13 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function ScrollCircle() {
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    // prefers-reduced-motion チェック
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   useEffect(() => {
     let autoRotation = 0;
+    let animationFrameId: number;
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -26,16 +41,18 @@ export default function ScrollCircle() {
       }
     };
 
-    // 自動回転アニメーション
+    // 自動回転アニメーション（prefers-reduced-motion で無効化）
     const animate = () => {
-      autoRotation += 0.004;
+      if (!prefersReducedMotion) {
+        autoRotation += 0.004;
+      }
       if (wrapperRef.current) {
         const scrollY = window.scrollY;
         wrapperRef.current.style.transform = `rotate(${
           scrollY * 0.01 + autoRotation
         }deg)`;
       }
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     };
     animate();
 
@@ -44,8 +61,9 @@ export default function ScrollCircle() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div

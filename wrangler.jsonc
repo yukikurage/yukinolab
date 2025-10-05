@@ -27,12 +27,22 @@
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
       "bucket_name": "yukinolabo-next-cache",
     },
+    // R2 bucket for content uploads (images, files, etc.)
+    {
+      "binding": "UPLOADS_BUCKET",
+      "bucket_name": "yukinolab-uploads",
+    },
   ],
   "kv_namespaces": [
     {
       "binding": "RATE_LIMIT_KV",
       "id": "9628959cf7a34d959b90d8c9109b2daf",
       "preview_id": "01428c8942d2415cbee7779e6c61840d"
+    },
+    // KV namespace for CMS content storage
+    {
+      "binding": "CONTENT_KV",
+      "id": "8bfbccaeadca49088cc0c9c1bca6661b"
     }
-  ]
+  ],
 }

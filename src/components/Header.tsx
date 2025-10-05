@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCrossEffect } from "@/hooks/useCrossEffect";
 import DarkModeToggle from "./DarkModeToggle";
 
-export default function Header() {
+interface HeaderProps {
+  isMenuOpen: boolean;
+  setIsMenuOpen: (isOpen: boolean) => void;
+}
+
+export default function Header({ isMenuOpen, setIsMenuOpen }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { trigger, CrossEffectRenderer } = useCrossEffect();
 
   useEffect(() => {
@@ -40,6 +44,7 @@ export default function Header() {
             ? "translate-y-0 opacity-100"
             : "-translate-y-full opacity-0"
         }`}
+        inert={!isVisible}
       >
         <div className="container mx-auto px-8 h-20 flex items-center justify-between">
           {/* ハンバーガーボタン（xl未満で表示） */}

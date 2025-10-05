@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import "./useCrossEffect.css";
 
 interface CrossEffect {
@@ -11,8 +11,26 @@ interface CrossEffect {
 
 export function useCrossEffect() {
   const [effects, setEffects] = useState<CrossEffect[]>([]);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   const trigger = useCallback((x: number, y: number) => {
+    // prefers-reduced-motion の時はエフェクトを無効化
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
     const newEffect = {
       id: Date.now() + Math.random(),
       x,
