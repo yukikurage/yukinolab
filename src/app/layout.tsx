@@ -3,6 +3,7 @@ import {
   Geist,
   Geist_Mono,
   Noto_Sans_JP,
+  Lexend,
   Lexend_Exa,
   Shadows_Into_Light_Two,
 } from "next/font/google";
@@ -13,29 +14,41 @@ import { getThemeScript } from "@/lib/ui";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
   weight: ["400", "700"],
+  display: "swap",
+});
+
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 const lexendExa = Lexend_Exa({
   variable: "--font-lexend-exa",
   subsets: ["latin"],
   weight: ["200", "400", "600", "700"],
+  display: "swap",
 });
 
 const shadowsIntoLightTwo = Shadows_Into_Light_Two({
   variable: "--font-shadows-into-light-two",
   subsets: ["latin"],
   weight: ["400"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -81,10 +94,17 @@ export default function RootLayout({
   return (
     <html lang="jp" suppressHydrationWarning>
       <head>
+        {/* Preconnect to Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSansJP.variable} ${lexendExa.variable} ${shadowsIntoLightTwo.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansJP.variable} ${lexend.variable} ${lexendExa.variable} ${shadowsIntoLightTwo.variable} antialiased`}
       >
         <LayoutEffects />
         {children}

@@ -13,6 +13,8 @@
     Consolas, "Liberation Mono", monospace;
   --font-title: var(--font-lexend-exa, ui-sans-serif), "Lexend Exa", system-ui,
     Arial, sans-serif;
+  --font-card: var(--font-lexend, ui-sans-serif), "Lexend", system-ui, Arial,
+    sans-serif;
 
   /* ---- colors (Light) ---- */
   --color-bg: #ffffff;

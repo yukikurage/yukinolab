@@ -1,2 +1,31 @@
+# Next.js静的ファイル（ハッシュ付きなので永続キャッシュ）
 /_next/static/*
   Cache-Control: public,max-age=31536000,immutable
+
+# 画像ファイルのキャッシュ（更新可能性があるため短め）
+/*.jpg
+  Cache-Control: public,max-age=86400,s-maxage=604800
+/*.jpeg
+  Cache-Control: public,max-age=86400,s-maxage=604800
+/*.png
+  Cache-Control: public,max-age=86400,s-maxage=604800
+/*.webp
+  Cache-Control: public,max-age=86400,s-maxage=604800
+
+# SVG（ファビコンなど、更新頻度低い）
+/*.svg
+  Cache-Control: public,max-age=604800,s-maxage=2592000
+
+# フォントファイル（Google Fonts経由なのでハッシュ付き）
+/*.woff2
+  Cache-Control: public,max-age=31536000,immutable
+/*.woff
+  Cache-Control: public,max-age=31536000,immutable
+
+# HTMLのキャッシュ（短めに設定）
+/*.html
+  Cache-Control: public,max-age=0,s-maxage=3600,must-revalidate
+
+# ルートページ
+/
+  Cache-Control: public,max-age=0,s-maxage=3600,must-revalidate

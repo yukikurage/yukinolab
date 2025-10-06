@@ -62,7 +62,7 @@ export default function MouseEffect({ generateStarPath }: MouseEffectProps) {
     return () => window.removeEventListener("pointermove", handleMouseMove);
   }, [prefersReducedMotion, isTouchDevice]);
 
-  // グローバルなクリックイベントをリスニング
+  // グローバルなクリックイベントをリスニング（モバイルでも click で統一）
   useEffect(() => {
     if (prefersReducedMotion) return;
 
@@ -82,35 +82,37 @@ export default function MouseEffect({ generateStarPath }: MouseEffectProps) {
     return () => window.removeEventListener("click", handleClick);
   }, [prefersReducedMotion, trigger]);
 
-  if (prefersReducedMotion || isTouchDevice) return null;
+  if (prefersReducedMotion) return null;
 
   return (
     <>
-      {/* マウス追従の星 - MouseFollowerを使用 */}
-      <MouseFollower
-        offset={{ x: -20, y: -20 }}
-        className="z-[9999]"
-        style={{
-          opacity: isOverText ? 0 : 1,
-          transition: "opacity 200ms",
-        }}
-      >
-        <svg
-          className="text-primary-light mouse-star"
-          width={40}
-          height={40}
-          viewBox="0 0 40 40"
+      {/* マウス追従の星 - タッチデバイスでは非表示 */}
+      {!isTouchDevice && (
+        <MouseFollower
+          offset={{ x: -20, y: -20 }}
+          className="z-[9999]"
+          style={{
+            opacity: isOverText ? 0 : 1,
+            transition: "opacity 200ms",
+          }}
         >
-          <path
-            d="M 20,5 Q 22,18 35,20 Q 22,22 20,35 Q 18,22 5,20 Q 18,18 20,5 Z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          />
-        </svg>
-      </MouseFollower>
+          <svg
+            className="text-primary-light mouse-star"
+            width={40}
+            height={40}
+            viewBox="0 0 40 40"
+          >
+            <path
+              d="M 20,5 Q 22,18 35,20 Q 22,22 20,35 Q 18,22 5,20 Q 18,18 20,5 Z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        </MouseFollower>
+      )}
 
-      {/* クリックエフェクト - useAnimatedElementsで管理 */}
+      {/* クリックエフェクト - PC/モバイル両方で表示 */}
       {elements.map((el) => (
         <div key={el.id}>
           {/* 拡大する円 */}

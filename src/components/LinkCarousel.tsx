@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useContentList } from "@/lib/cms/hooks";
 
 interface Work {
@@ -85,10 +86,13 @@ export default function LinkCarousel() {
               >
                 {/* Background Image */}
                 <div className="overflow-hidden rounded-lg absolute inset-0">
-                  <img
+                  <Image
                     src={work.image}
                     alt={work.title}
-                    className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 600px"
+                    className="object-cover transition-transform group-hover:scale-105 duration-500"
+                    loading={deltaIdx === 0 ? "eager" : "lazy"}
                   />
                   <div
                     className="absolute inset-0"
@@ -108,7 +112,7 @@ export default function LinkCarousel() {
                   }}
                 >
                   <div className="flex items-start gap-2">
-                    <h3 className="font-title text-lg font-semibold text-text">
+                    <h3 className="font-card text-lg font-semibold text-text">
                       {work.title}
                     </h3>
                     <svg

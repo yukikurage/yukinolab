@@ -41,7 +41,7 @@ export default function WorkCard({
 
       {/* 下半分: タイトルと説明 */}
       <div className="flex-1 p-6 flex flex-col justify-end items-start z-20">
-        <h3 className="font-title text-2xl font-semibold mb-2 text-text">
+        <h3 className="font-card text-2xl font-semibold mb-2 text-text">
           {title}
         </h3>
         <p className="text-text-secondary text-sm line-clamp-2">

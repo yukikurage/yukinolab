@@ -45,7 +45,7 @@ export default function PriceSection() {
         {/* 基本料金 */}
         <Card data-text-region clickable={false} className="border bg-bg p-8">
           <div className="mb-12">
-            <h3 className="font-title text-2xl font-bold mb-6 text-text">
+            <h3 className="font-card text-2xl font-bold mb-6 text-text">
               基本料金
             </h3>
             <p className="text-text-secondary mb-4 leading-relaxed">
@@ -105,13 +105,13 @@ export default function PriceSection() {
 
         {/* 追加オプション */}
         <div data-text-region>
-          <h3 className="font-title text-2xl font-bold mb-10 text-text">
+          <h3 className="font-card text-2xl font-bold mb-10 text-text">
             追加オプション
           </h3>
           <div className="space-y-6">
             <div className="flex items-start justify-between py-6 border-b border-border">
               <div className="flex-1">
-                <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                <h4 className="font-card text-lg font-semibold mb-2 text-text">
                   コンテンツ追加
                 </h4>
                 <p className="text-text-secondary">
@@ -126,7 +126,7 @@ export default function PriceSection() {
 
             <div className="flex items-start justify-between py-6 border-b border-border">
               <div className="flex-1">
-                <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                <h4 className="font-card text-lg font-semibold mb-2 text-text">
                   動きのある背景・エフェクト
                 </h4>
                 <p className="text-text-secondary">
@@ -142,7 +142,7 @@ export default function PriceSection() {
 
             <div className="flex items-start justify-between py-6 border-b border-border">
               <div className="flex-1">
-                <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                <h4 className="font-card text-lg font-semibold mb-2 text-text">
                   特殊なデザイン・処理
                 </h4>
                 <p className="text-text-secondary">
@@ -158,7 +158,7 @@ export default function PriceSection() {
 
             <div className="flex items-start justify-between py-6">
               <div className="flex-1">
-                <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                <h4 className="font-card text-lg font-semibold mb-2 text-text">
                   後からの追加・修正
                 </h4>
                 <p className="text-text-secondary">
@@ -174,7 +174,7 @@ export default function PriceSection() {
 
         {/* サイトタイプ別の目安 */}
         <div data-text-region>
-          <h3 className="font-title text-2xl font-bold mb-10 text-text">
+          <h3 className="font-card text-2xl font-bold mb-10 text-text">
             サイトタイプ別の目安
           </h3>
           <div className="space-y-8">
@@ -246,7 +246,7 @@ export default function PriceSection() {
         {/* 基本料金 */}
         <Card data-text-region clickable={false} className="border bg-bg p-8">
           <div className="mb-12">
-            <h3 className="font-title text-2xl font-bold mb-6 text-text">
+            <h3 className="font-card text-2xl font-bold mb-6 text-text">
               基本料金
             </h3>
             {pricing.baseDescription && (
@@ -284,7 +284,7 @@ export default function PriceSection() {
         {/* 追加オプション */}
         {pricing.options.length > 0 && (
           <div data-text-region>
-            <h3 className="font-title text-2xl font-bold mb-10 text-text">
+            <h3 className="font-card text-2xl font-bold mb-10 text-text">
               追加オプション
             </h3>
             <div className="space-y-6">
@@ -296,7 +296,7 @@ export default function PriceSection() {
                   }`}
                 >
                   <div className="flex-1">
-                    <h4 className="font-title text-lg font-semibold mb-2 text-text">
+                    <h4 className="font-card text-lg font-semibold mb-2 text-text">
                       {option.name}
                     </h4>
                     {option.description && (
@@ -320,7 +320,7 @@ export default function PriceSection() {
         {/* サイトタイプ別の目安 */}
         {pricing.siteTypeExamples.length > 0 && (
           <div data-text-region>
-            <h3 className="font-title text-2xl font-bold mb-10 text-text">
+            <h3 className="font-card text-2xl font-bold mb-10 text-text">
               サイトタイプ別の目安
             </h3>
             <div className="space-y-8">
